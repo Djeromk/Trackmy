@@ -1,4 +1,3 @@
-/* @import url("https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Epilogue:wght@300;400;500&display=swap"); */
 @import "./fonts.css";
 @import "tailwindcss";
 @import "./variables.css";
@@ -8,83 +7,61 @@
     scrollbar-width: none;
     -ms-overflow-style: none;
   }
-
   .scrollbar-hide-true::-webkit-scrollbar {
     display: none;
   }
+
   * {
     font-family:
-	"Epilogue",
-	"Syne",
-      "Inter",
-      -apple-system,
-      BlinkMacSystemFont,
-      sans-serif;
+      "Geist Mono",
+      "Epilogue",
+      ui-monospace,
+      monospace;
   }
 
   body {
-    @apply bg-[var(--background-body)] text-[var(--text-secondary)] antialiased;
+    @apply antialiased;
+    background-color: var(--background-body);
+    color: var(--text-secondary);
     font-size: var(--text-base);
     line-height: var(--leading-normal);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
 
-  /* ТИПОГРАФИКА - УСИЛЕННЫЙ КОНТРАСТ */
-
-  /* H1 - Главный заголовок страницы (увеличен с 36px до 48px) */
   h1 {
-    font-size: var(--text-4xl); /* 48px */
-    font-weight: var(--font-bold); /* 700 */
-    line-height: var(--leading-tight); /* 1.15 */
-    letter-spacing: var(--tracking-tight); /* -0.015em */
-    color: var(--text-primary); /* Почти черный */
-  }
-
-  /* H2 - Заголовки секций (увеличен с 24px до 36px) */
-  h2 {
-    font-size: var(--text-3xl); /* 36px */
-    font-weight: var(--font-bold); /* 700 */
-    line-height: var(--leading-tight); /* 1.15 */
+    font-size: var(--text-4xl);
+    font-weight: var(--font-bold);
+    line-height: var(--leading-tight);
     letter-spacing: var(--tracking-tight);
     color: var(--text-primary);
   }
-
-  /* H3 - Подзаголовки (увеличен с 20px до 28px) */
-  h3 {
-    font-size: var(--text-2xl); /* 28px */
-    font-weight: var(--font-semibold); /* 600 */
-    line-height: var(--leading-snug); /* 1.375 */
+  h2 {
+    font-size: var(--text-3xl);
+    font-weight: var(--font-bold);
+    line-height: var(--leading-tight);
+    letter-spacing: var(--tracking-tight);
     color: var(--text-primary);
   }
-
-  /* H4 - Заголовки карточек */
+  h3 {
+    font-size: var(--text-2xl);
+    font-weight: var(--font-semibold);
+    line-height: var(--leading-snug);
+    color: var(--text-primary);
+  }
   h4 {
-    font-size: var(--text-lg); /* 18px */
-    font-weight: var(--font-semibold); /* 600 */
+    font-size: var(--text-lg);
+    font-weight: var(--font-semibold);
     line-height: var(--leading-normal);
     color: var(--text-primary);
   }
 
-  /* Body текст - основной */
-  p,
-  span,
-  div {
-    font-size: var(--text-base); /* 15px */
-    line-height: var(--leading-normal); /* 1.5 */
+  p, span, div {
+    font-size: var(--text-base);
+    line-height: var(--leading-normal);
   }
 
-  /* Вторичный текст - подписи, метаданные */
-  .text-secondary {
-    font-size: var(--text-sm); /* 13px */
-    color: var(--text-tertiary); /* Средне-серый */
-  }
-
-  /* Скрытие скроллбара */
-  .no-scrollbar::-webkit-scrollbar {
-    display: none;
-  }
-
+  .no-scrollbar::-webkit-scrollbar { display: none; }
   .no-scrollbar {
     -ms-overflow-style: none;
     scrollbar-width: none;
@@ -92,317 +69,243 @@
 }
 
 /* ============================================
-   UTILITY КЛАССЫ
+   UTILITIES
    ============================================ */
 
-/* Кнопка - базовая */
 @utility btn {
   @apply inline-flex items-center justify-center gap-2
-		       px-4 py-2.5 rounded-lg
-		       font-medium text-sm
-		       transition-all duration-(--transition-base)
-		       focus:outline-none focus:ring-2 focus:ring-offset-2
-		       disabled:opacity-50 disabled:cursor-not-allowed;
+         px-4 py-2.5 rounded-lg
+         font-medium text-sm
+         transition-all duration-(--transition-base)
+         focus:outline-none focus:ring-2 focus:ring-offset-2
+         disabled:opacity-40 disabled:cursor-not-allowed;
 }
 
-/* Карточка - базовая */
 @utility card {
-  @apply bg-[var(--background-card)]
-		       rounded-xl
-		       border border-[var(--border-color)]
-		       shadow-[var(--shadow-sm)]
-		       transition-shadow duration-[var(--transition-base)];
+  background-color: var(--background-card);
+  border-radius: var(--border-radius-md);
+  border: var(--border-width) solid var(--border-color);
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow var(--transition-base);
 }
 
-/* Badge - базовый */
 @utility badge {
   @apply inline-flex items-center gap-1.5
-		       px-2.5 py-1
-		       rounded-md
-		       text-[var(--text-xs)]
-		       font-medium
-		       transition-colors duration-[var(--transition-fast)];
+         px-2.5 py-1
+         rounded-md
+         text-xs
+         font-medium
+         transition-colors;
 }
 
-/* Input - базовый */
 @utility input {
-  @apply w-full px-3 py-2
-		       rounded-lg
-		       bg-white
-		       border border-[var(--border-color)]
-		       text-[var(--text-secondary)]
-		       text-[var(--text-sm)]
-		       placeholder:text-[var(--text-tertiary)]
-		       focus:outline-none
-		       focus:ring-2
-		       focus:ring-[var(--primary-500)]
-		       focus:border-transparent
-		       transition-all duration-[var(--transition-fast)]
-		       disabled:bg-[var(--background-subtle)]
-		       disabled:cursor-not-allowed;
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border-radius: var(--border-radius-base);
+  background-color: var(--background-subtle);
+  border: var(--border-width) solid var(--border-color);
+  color: var(--text-secondary);
+  font-size: var(--text-sm);
+  transition: all var(--transition-fast);
 }
+/* @utility input:focus {
+  outline: none;
+  border-color: var(--primary-500);
+  box-shadow: 0 0 0 2px var(--primary-50);
+} */
 
 @utility icon-wrapper {
   @apply flex items-center justify-center
-		       rounded-lg
-		       transition-all duration-[var(--transition-base)];
+         rounded-lg
+         transition-all duration-(--transition-base);
 }
 
 @utility nav-link {
-  @apply px-4 py-2
-		       rounded-md
-		       text-[var(--text-sm)]
-		       font-medium
-		       text-[var(--text-tertiary)]
-		       hover:text-[var(--text-secondary)]
-		       hover:bg-[var(--background-hover)]
-		       transition-colors duration-[var(--transition-fast)]
-		       cursor-pointer;
+  padding: 0.5rem 1rem;
+  border-radius: var(--border-radius-base);
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  color: var(--text-tertiary);
+  transition: all var(--transition-fast);
+  cursor: pointer;
 }
 
 /* ============================================
-   КОМПОНЕНТЫ - Modern SaaS UI
+   COMPONENTS
    ============================================ */
 
 @layer components {
-  /* ----------------------------------------
-	   КНОПКИ
-	   ---------------------------------------- */
 
-  /* Primary - главное действие */
+  /* BUTTONS */
   .btn-primary {
-    @apply btn
-		       bg-[var(--primary-600)]
-		       text-white
-			   cursor-pointer
-		       hover:bg-[var(--primary-700)]
-		       active:bg-[var(--primary-800)]
-		       focus:ring-[var(--primary-500)]
-		       shadow-[var(--shadow-sm)];
+    @apply btn cursor-pointer;
+    background-color: var(--primary-500);
+    color: var(--text-inverse);
+    box-shadow: var(--shadow-sm);
   }
+  .btn-primary:hover { background-color: var(--primary-600); }
+  .btn-primary:active { background-color: var(--primary-700); }
 
-  /* Secondary - второстепенное */
   .btn-secondary {
-    @apply btn
-		       bg-white
-			   cursor-pointer
-		       text-[var(--text-secondary)]
-		       border border-[var(--border-color)]
-		       hover:bg-[var(--background-hover)]
-		       active:bg-[var(--background-active)]
-		       focus:ring-[var(--gray-400)]
-		       shadow-[var(--shadow-xs)];
+    @apply btn cursor-pointer;
+    background-color: var(--background-card);
+    color: var(--text-secondary);
+    border: var(--border-width) solid var(--border-color);
+    box-shadow: var(--shadow-xs);
   }
+  .btn-secondary:hover { background-color: var(--background-hover); }
 
-  /* Ghost - без фона */
   .btn-ghost {
-    @apply btn
-		       bg-transparent
-		       text-[var(--text-tertiary)]
-		       hover:bg-[var(--background-hover)]
-		       hover:text-[var(--text-secondary)]
-		       active:bg-[var(--background-active)]
-		       focus:ring-[var(--gray-400)];
+    @apply btn cursor-pointer;
+    background: transparent;
+    color: var(--text-tertiary);
+  }
+  .btn-ghost:hover {
+    background-color: var(--background-hover);
+    color: var(--text-secondary);
   }
 
-  /* Добавление - круглая кнопка с + */
   .btn-add {
     @apply flex items-center justify-center
-		       rounded-xl
-		       border-2  border-[var(--border-color)]
-		       text-lg font-bold text-white
-		       hover:border-[var(--primary-500)]
-		       hover:bg-[var(--primary-50)]
-		       transition-all duration-[var(--transition-base)]
-		       cursor-pointer;
+           rounded-xl cursor-pointer;
+    border: 2px solid var(--border-color);
+    color: var(--text-tertiary);
+    font-size: 1.125rem;
+    font-weight: var(--font-bold);
+    transition: all var(--transition-base);
+  }
+  .btn-add:hover {
+    border-color: var(--primary-500);
+    color: var(--primary-500);
+    background-color: var(--primary-50);
   }
 
-  /* ----------------------------------------
-	   КАРТОЧКИ
-	   ---------------------------------------- */
-
-  /* С паддингом */
+  /* CARDS */
   .card-padded {
-    @apply card p-4;
+    @apply card;
+    padding: 1rem;
   }
 
-  /* Категория медиа - улучшенная */
   .category-card {
-    @apply card p-6
-		       hover:shadow-[var(--shadow-md)]
-		       hover:border-[var(--primary-200)]
-		       cursor-pointer
-		       transition-all duration-[var(--transition-base)];
+    @apply card cursor-pointer;
+    padding: 1.5rem;
+    transition: all var(--transition-base);
+  }
+  .category-card:hover {
+    box-shadow: var(--shadow-md);
+    border-color: var(--border-color-strong);
   }
 
-  /* Hero карточка - для InProgress */
-  .card-hero {
-    @apply card p-8
-		       bg-[var(--primary-50)]
-		       border-[var(--primary-200)]
-		       shadow-[var(--shadow-md)];
-  }
-
-  /* ----------------------------------------
-	   СТАТУСЫ (без градиентов!)
-	   ---------------------------------------- */
-
-  /* Backlog - нейтральный серый */
+  /* STATUS BADGES */
   .badge-backlog {
-    @apply badge
-		       bg-[var(--status-backlog-bg)]
-		       text-[var(--status-backlog-text)]
-		       border border-[var(--status-backlog-border)];
+    @apply badge;
+    background-color: var(--status-backlog-bg);
+    color: var(--status-backlog-text);
+    border: 1px solid var(--status-backlog-border);
   }
-
-  /* In Progress - primary синий */
   .badge-in-progress {
-    @apply badge
-		       bg-[var(--status-progress-bg)]
-		       text-[var(--status-progress-text)]
-		       border border-[var(--status-progress-border)];
+    @apply badge;
+    background-color: var(--status-progress-bg);
+    color: var(--status-progress-text);
+    border: 1px solid var(--status-progress-border);
   }
-
-  /* Completed - светлый primary */
   .badge-completed {
-    @apply badge
-		       bg-[var(--status-completed-bg)]
-		       text-[var(--status-completed-text)]
-		       border border-[var(--status-completed-border)];
+    @apply badge;
+    background-color: var(--status-completed-bg);
+    color: var(--status-completed-text);
+    border: 1px solid var(--status-completed-border);
   }
-
-  /* Dropped - темный серый */
   .badge-dropped {
-    @apply badge
-		       bg-[var(--status-dropped-bg)]
-		       text-[var(--status-dropped-text)]
-		       border border-[var(--status-dropped-border)];
+    @apply badge;
+    background-color: var(--status-dropped-bg);
+    color: var(--status-dropped-text);
+    border: 1px solid var(--status-dropped-border);
   }
-
-  /* Wishlist - средний серый */
   .badge-wishlist {
-    @apply badge
-		       bg-[var(--status-wishlist-bg)]
-		       text-[var(--status-wishlist-text)]
-		       border border-[var(--status-wishlist-border)];
+    @apply badge;
+    background-color: var(--status-wishlist-bg);
+    color: var(--status-wishlist-text);
+    border: 1px solid var(--status-wishlist-border);
   }
 
-  /* ----------------------------------------
-	   ПРОГРЕСС БАР (без градиента!)
-	   ---------------------------------------- */
-
+  /* PROGRESS */
   .progress {
-    @apply w-full h-1.5
-		       rounded-full
-		       bg-[var(--gray-100)]
-		       overflow-hidden;
+    width: 100%;
+    height: 0.375rem;
+    border-radius: var(--border-radius-full);
+    background-color: var(--gray-200);
+    overflow: hidden;
   }
-
   .progress-fill {
-    @apply h-full
-		       rounded-full
-		       bg-[var(--primary-500)]  /* Чистый синий, без градиента */
-		       transition-all duration-[var(--transition-slow)];
+    height: 100%;
+    border-radius: var(--border-radius-full);
+    background-color: var(--primary-500);
+    transition: width var(--transition-slow);
   }
 
-  /* ----------------------------------------
-	   ИКОНКИ И ОБЕРТКИ
-	   ---------------------------------------- */
-
-  /* Категории - тонкие вариации primary */
+  /* ICON WRAPPERS */
   .icon-wrapper-books {
-    @apply icon-wrapper
-		       bg-[var(--category-books-bg)]
-		      text-white;
+    @apply icon-wrapper;
+    background-color: var(--category-books-bg);
+    color: white;
   }
-
   .icon-wrapper-movies {
-    @apply icon-wrapper
-		       bg-[var(--category-movies-bg)]
-		      text-white;
+    @apply icon-wrapper;
+    background-color: var(--category-movies-bg);
+    color: white;
   }
-
   .icon-wrapper-games {
-    @apply icon-wrapper
-		       bg-[var(--category-games-bg)]
-text-white;
+    @apply icon-wrapper;
+    background-color: var(--category-games-bg);
+    color: white;
   }
 
-  /* ----------------------------------------
-	   НАВИГАЦИЯ
-	   ---------------------------------------- */
+  /* CATEGORY CARDS */
+  .books-card { border-left: 4px solid var(--category-books-bg); }
+  .movies-card { border-left: 4px solid var(--category-movies-bg); }
+  .games-card { border-left: 4px solid var(--category-games-bg); }
 
+  /* NAV */
   .nav-link-active {
-    @apply nav-link
-		       bg-[var(--primary-50)]
-		       text-[var(--primary-700)]
-		       hover:bg-[var(--primary-100)]
-		       hover:text-[var(--primary-800)];
+    @apply nav-link;
+    background-color: var(--primary-50);
+    color: var(--primary-500);
   }
 
-  /* ----------------------------------------
-	   СПИСКИ
-	   ---------------------------------------- */
-
+  /* LISTS */
   .list-header {
-    @apply flex items-center justify-between
-		       pb-3
-		       border-b border-[var(--border-color)];
+    @apply flex items-center justify-between pb-3;
+    border-bottom: 1px solid var(--border-color);
   }
-
   .list-title {
-    @apply text-[var(--text-lg)]
-		       font-semibold
-		       text-[var(--text-primary)]
-		       flex items-center gap-2;
+    font-size: var(--text-lg);
+    font-weight: var(--font-semibold);
+    color: var(--text-primary);
+    @apply flex items-center gap-2;
   }
-
   .list-count {
-    @apply text-[var(--text-sm)]
-		       text-[var(--text-tertiary)]
-		       font-normal;
+    font-size: var(--text-sm);
+    color: var(--text-tertiary);
+    font-weight: var(--font-normal);
   }
 
-  /* ----------------------------------------
-	   GRID СИСТЕМЫ
-	   ---------------------------------------- */
+  /* GRID */
+  .stats-grid { @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4; }
+  .media-grid { @apply grid grid-cols-1 gap-3; }
 
-  .stats-grid {
-    @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4;
-  }
-
-  .media-grid {
-    @apply grid grid-cols-1 gap-3;
-  }
-
-  /* ----------------------------------------
-	   DIVIDER
-	   ---------------------------------------- */
-
-  .divider {
-    @apply border-t border-[var(--border-color)] my-6;
-  }
-
-  /* ----------------------------------------
-	   УТИЛИТЫ
-	   ---------------------------------------- */
-
-  /* Текст с многоточием */
+  /* TEXT CLAMP */
   .text-ellipsis-1 {
     display: -webkit-box;
     -webkit-line-clamp: 1;
     -webkit-box-orient: vertical;
     overflow: hidden;
-    text-overflow: ellipsis;
   }
-
   .text-ellipsis-2 {
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
   }
-
   .text-ellipsis-3 {
     display: -webkit-box;
     -webkit-line-clamp: 3;
@@ -410,35 +313,27 @@ text-white;
     overflow: hidden;
   }
 
-  /* Skeleton загрузчик */
+  /* SKELETON */
   .skeleton {
-    @apply bg-[var(--gray-100)]
-		       animate-pulse
-		       rounded;
+    background-color: var(--gray-200);
+    @apply animate-pulse rounded;
   }
 
-  /* Аватар */
+  /* AVATAR */
   .avatar {
-    @apply w-9 h-9
-		       rounded-full
-		       bg-[var(--primary-600)]  /* Чистый синий, без градиента */
-		       flex items-center justify-center
-		       text-white
-		       font-semibold
-		       text-[var(--text-sm)]
-		       shadow-[var(--shadow-sm)];
+    @apply flex items-center justify-center
+           rounded-full text-white font-semibold;
+    width: 2.25rem;
+    height: 2.25rem;
+    font-size: var(--text-sm);
+    background: linear-gradient(135deg, var(--primary-500), var(--primary-700));
+    box-shadow: var(--shadow-sm);
   }
-  /* ============================================
-	   AUTH КОМПОНЕНТЫ
-	   Используются только в Login.vue и Register.vue.
-	   Все значения читаются из переменных --auth-* в variables.css.
-	   Разделение намеренное: тёмная тема auth изолирована
-	   от основной светлой темы приложения.
-	   ============================================ */
 
-  /* Корневая обёртка всей страницы.
-	   overflow-hidden нужен чтобы декоративные слова на фоне
-	   не создавали горизонтальный скролл. */
+  /* ============================================
+     AUTH COMPONENTS
+     ============================================ */
+
   .auth-page {
     min-height: 100vh;
     width: 100%;
@@ -450,19 +345,12 @@ text-white;
     position: relative;
     overflow: hidden;
   }
-
-  /* Слой фона: сетка + свечение + декоративные слова.
-	   position: fixed — не скроллится вместе со страницей.
-	   pointer-events: none — не перехватывает клики. */
   .auth-bg-layer {
     position: fixed;
     inset: 0;
     pointer-events: none;
     z-index: 0;
   }
-
-  /* Пересекающиеся линии сетки — добавляют текстуру глубины.
-	   Цвет берётся из --auth-grid-color (почти прозрачный). */
   .auth-grid-lines {
     position: absolute;
     inset: 0;
@@ -471,9 +359,6 @@ text-white;
       linear-gradient(90deg, var(--auth-grid-color) 1px, transparent 1px);
     background-size: 72px 72px;
   }
-
-  /* Радиальное свечение по центру — мягко подсвечивает форму.
-	   Создаёт ощущение «источника света» за карточкой. */
   .auth-center-glow {
     position: absolute;
     top: 50%;
@@ -481,17 +366,9 @@ text-white;
     transform: translate(-50%, -50%);
     width: 700px;
     height: 700px;
-    background: radial-gradient(
-      circle,
-      var(--auth-glow-color) 0%,
-      transparent 65%
-    );
+    background: radial-gradient(circle, var(--auth-glow-color) 0%, transparent 65%);
     border-radius: 50%;
   }
-
-  /* Огромные декоративные слова на фоне.
-	   Используют var(--auth-poster-color) — почти прозрачные,
-	   анимируются классом auth-drift через @keyframes ниже. */
   .auth-poster {
     position: absolute;
     font-family: var(--auth-font-display);
@@ -501,9 +378,6 @@ text-white;
     user-select: none;
     line-height: 1;
   }
-
-  /* Шапка с логотипом.
-	   z-index: 10 — поверх фонового слоя. */
   .auth-header {
     position: relative;
     z-index: 10;
@@ -512,17 +386,12 @@ text-white;
     display: flex;
     align-items: center;
   }
-
-  /* Ссылка-логотип */
   .auth-logo {
     display: flex;
     align-items: center;
     gap: 0.75rem;
     text-decoration: none;
   }
-
-  /* Белый квадратный значок с буквой «M».
-	   Используем --auth-logo-bg и --auth-logo-text. */
   .auth-logo-mark {
     width: 36px;
     height: 36px;
@@ -537,8 +406,6 @@ text-white;
     font-weight: 800;
     flex-shrink: 0;
   }
-
-  /* Двустрочная подпись логотипа — как издательский марк */
   .auth-logo-text {
     font-family: var(--auth-font-display);
     font-size: 0.6rem;
@@ -547,8 +414,6 @@ text-white;
     color: var(--auth-logo-label);
     line-height: 1.4;
   }
-
-  /* Центральная зона — растягивается и центрирует карточку */
   .auth-main {
     position: relative;
     z-index: 10;
@@ -559,12 +424,6 @@ text-white;
     padding: 1rem 1.5rem 3rem;
     width: 100%;
   }
-
-  /* Стеклянная карточка формы.
-	   Ключевые свойства:
-	   - backdrop-filter: blur(24px) — создаёт эффект матового стекла
-	   - background: --auth-card-bg — полупрозрачный белый
-	   - animation: auth-card-in — плавное появление снизу */
   .auth-card {
     width: 100%;
     max-width: 420px;
@@ -577,19 +436,8 @@ text-white;
     box-shadow: var(--auth-card-shadow);
     animation: auth-card-in 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
   }
-
-  /* Расширенная карточка для Register — больше полей (пароль + подтверждение в сетке) */
-  .auth-card--wide {
-    max-width: 460px;
-  }
-
-  /* Заголовочная зона карточки */
-  .auth-card-header {
-    margin-bottom: 1.75rem;
-  }
-
-  /* Надпись-eyebrow над заголовком.
-	   Маленькие буквы с большим трекингом — типографический акцент. */
+  .auth-card--wide { max-width: 460px; }
+  .auth-card-header { margin-bottom: 1.75rem; }
   .auth-eyebrow {
     font-family: var(--auth-font-display);
     font-size: 0.7rem;
@@ -599,48 +447,36 @@ text-white;
     color: var(--auth-accent);
     margin: 0 0 0.4rem;
   }
-
-  /* Главный заголовок формы */
   .auth-title {
     font-family: var(--auth-font-display);
     font-size: 2rem;
     font-weight: 800;
-    color: #ffffff;
+    color: var(--text-primary);
     margin: 0 0 0.3rem;
     letter-spacing: -0.03em;
     line-height: 1.1;
   }
-
-  /* Подзаголовок / слоган под заголовком */
   .auth-subtitle {
     font-size: 0.82rem;
     color: var(--auth-text-muted);
     margin: 0;
   }
-
-  /* Контейнер полей формы */
   .auth-form {
     display: flex;
     flex-direction: column;
     gap: 1rem;
   }
-
-  /* Одно поле: label + input [+ hint] */
   .auth-field {
     display: flex;
     flex-direction: column;
     gap: 0.375rem;
   }
-
-  /* Label над полем */
   .auth-label {
     font-size: 0.73rem;
     font-weight: 500;
     color: var(--auth-label);
     letter-spacing: 0.04em;
   }
-
-  /* Подсказка под полем — например «✓ Совпадает» */
   .auth-hint {
     font-size: 0.72rem;
     font-weight: 500;
@@ -648,30 +484,14 @@ text-white;
     margin-top: 0.2rem;
     color: var(--auth-label);
   }
-
-  /* Цветовые модификаторы подсказки */
-  .auth-hint--ok {
-    color: var(--auth-success-text);
-  }
-  .auth-hint--err {
-    color: var(--auth-error-text);
-  }
-
-  /* Двухколоночная сетка для полей паролей в Register.
-	   На мобильных (<520px) схлопывается в одну колонку (см. @media ниже). */
+  .auth-hint--ok { color: var(--auth-success-text); }
+  .auth-hint--err { color: var(--auth-error-text); }
   .auth-fields-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 0.875rem;
   }
-
-  /* Обёртка input + кнопка-глаз */
-  .auth-input-wrap {
-    position: relative;
-  }
-
-  /* Поле ввода — полупрозрачное тёмное.
-	   Все цвета берутся из --auth-input-* переменных. */
+  .auth-input-wrap { position: relative; }
   .auth-input {
     width: 100%;
     padding: 0.7rem 0.9rem;
@@ -683,45 +503,19 @@ text-white;
     color: var(--auth-input-text);
     outline: none;
     box-sizing: border-box;
-    transition:
-      border-color 0.2s ease,
-      background 0.2s ease,
-      box-shadow 0.2s ease;
+    transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
   }
-
-  .auth-input::placeholder {
-    color: var(--auth-input-placeholder);
-  }
-
-  /* Состояние фокуса: подсвечиваем акцентным голубым */
+  .auth-input::placeholder { color: var(--auth-input-placeholder); }
   .auth-input:focus {
     border-color: var(--auth-accent-border);
     background: var(--auth-input-bg-focus);
     box-shadow: 0 0 0 3px var(--auth-accent-glow);
   }
-
-  /* Модификатор «пароли совпадают» — зелёный border */
-  .auth-input--ok {
-    border-color: var(--auth-match-border);
-  }
-  .auth-input--ok:focus {
-    box-shadow: 0 0 0 3px var(--auth-match-glow);
-  }
-
-  /* Модификатор «пароли не совпадают» — красный border */
-  .auth-input--err {
-    border-color: var(--auth-mismatch-border);
-  }
-  .auth-input--err:focus {
-    box-shadow: 0 0 0 3px var(--auth-mismatch-glow);
-  }
-
-  /* Когда input внутри auth-input-wrap — освобождаем место под кнопку-глаз */
-  .auth-input-wrap .auth-input {
-    padding-right: 2.5rem;
-  }
-
-  /* Кнопка показа/скрытия пароля */
+  .auth-input--ok { border-color: var(--auth-match-border); }
+  .auth-input--ok:focus { box-shadow: 0 0 0 3px var(--auth-match-glow); }
+  .auth-input--err { border-color: var(--auth-mismatch-border); }
+  .auth-input--err:focus { box-shadow: 0 0 0 3px var(--auth-mismatch-glow); }
+  .auth-input-wrap .auth-input { padding-right: 2.5rem; }
   .auth-eye-btn {
     position: absolute;
     right: 0.75rem;
@@ -736,12 +530,7 @@ text-white;
     align-items: center;
     transition: color 0.15s ease;
   }
-
-  .auth-eye-btn:hover {
-    color: rgba(255, 255, 255, 0.6);
-  }
-
-  /* Блок ошибки формы */
+  .auth-eye-btn:hover { color: var(--text-secondary); }
   .auth-error-msg {
     font-size: 0.8rem;
     color: var(--auth-error-text);
@@ -751,11 +540,6 @@ text-white;
     border-radius: 8px;
     margin: 0;
   }
-
-  /* Кнопка отправки.
-	   Белая на тёмном фоне — инвертированный контраст.
-	   Это лучше чем синяя кнопка, потому что синий акцент
-	   уже занят элементами интерфейса (eyebrow, ссылки). */
   .auth-submit {
     width: 100%;
     padding: 0.875rem;
@@ -769,37 +553,22 @@ text-white;
     font-weight: 700;
     letter-spacing: 0.04em;
     cursor: pointer;
-    transition:
-      background 0.15s ease,
-      transform 0.1s ease,
-      box-shadow 0.15s ease;
+    transition: background 0.15s ease, transform 0.1s ease, box-shadow 0.15s ease;
     box-shadow: var(--auth-btn-shadow);
   }
-
   .auth-submit:hover:not(:disabled) {
     background: var(--auth-btn-bg-hover);
     transform: translateY(-1px);
     box-shadow: var(--auth-btn-shadow-hover);
   }
-
-  .auth-submit:active:not(:disabled) {
-    transform: translateY(0);
-  }
-
-  .auth-submit:disabled {
-    opacity: 0.35;
-    cursor: not-allowed;
-  }
-
-  /* Три точки-индикатора загрузки внутри кнопки.
-	   Каждая точка анимируется с задержкой через @keyframes auth-blink. */
+  .auth-submit:active:not(:disabled) { transform: translateY(0); }
+  .auth-submit:disabled { opacity: 0.35; cursor: not-allowed; }
   .auth-loading-dots {
     display: inline-flex;
     gap: 5px;
     align-items: center;
     height: 18px;
   }
-
   .auth-loading-dots span {
     display: block;
     width: 5px;
@@ -808,15 +577,8 @@ text-white;
     border-radius: 50%;
     animation: auth-blink 1s ease-in-out infinite;
   }
-
-  .auth-loading-dots span:nth-child(2) {
-    animation-delay: 0.15s;
-  }
-  .auth-loading-dots span:nth-child(3) {
-    animation-delay: 0.3s;
-  }
-
-  /* Нижняя строка карточки (ссылки «уже есть аккаунт» и «без аккаунта») */
+  .auth-loading-dots span:nth-child(2) { animation-delay: 0.15s; }
+  .auth-loading-dots span:nth-child(3) { animation-delay: 0.3s; }
   .auth-card-footer {
     margin-top: 1.25rem;
     display: flex;
@@ -826,32 +588,20 @@ text-white;
     font-size: 0.82rem;
     color: var(--auth-text-muted);
   }
-
-  /* Основная ссылка — голубая акцентная */
   .auth-link {
     color: var(--auth-accent);
     text-decoration: none;
     font-weight: 500;
     transition: color 0.15s ease;
   }
-
-  .auth-link:hover {
-    color: rgba(99, 180, 255, 1);
-  }
-
-  /* Второстепенная ссылка — почти невидимая, «продолжить без аккаунта» */
+  .auth-link:hover { opacity: 0.85; }
   .auth-link-muted {
     font-size: 0.78rem;
     color: var(--auth-text-very-muted);
     text-decoration: none;
     transition: color 0.15s ease;
   }
-
-  .auth-link-muted:hover {
-    color: var(--auth-text-muted);
-  }
-
-  /* Экран успешной регистрации — заменяет форму после успешной отправки */
+  .auth-link-muted:hover { color: var(--auth-text-muted); }
   .auth-success-screen {
     display: flex;
     flex-direction: column;
@@ -861,8 +611,6 @@ text-white;
     padding: 2rem 0;
     text-align: center;
   }
-
-  /* Иконка галочки в круге */
   .auth-success-icon {
     width: 60px;
     height: 60px;
@@ -874,536 +622,69 @@ text-white;
     justify-content: center;
     color: var(--auth-success-text);
   }
-
   .auth-success-title {
     font-family: var(--auth-font-display);
     font-size: 1.4rem;
     font-weight: 700;
-    color: #ffffff;
+    color: var(--text-primary);
     margin: 0;
   }
-
   .auth-success-sub {
     font-size: 0.85rem;
     color: var(--auth-text-muted);
     margin: 0;
   }
 
-  /* Адаптив: на мобильных (<520px) убираем сетку паролей в Register */
   @media (max-width: 520px) {
-    .auth-fields-row {
-      grid-template-columns: 1fr;
-    }
-
-    .auth-card {
-      padding: 2rem 1.5rem;
-    }
-
-    .auth-title {
-      font-size: 1.75rem;
-    }
+    .auth-fields-row { grid-template-columns: 1fr; }
+    .auth-card { padding: 2rem 1.5rem; }
+    .auth-title { font-size: 1.75rem; }
   }
 }
 
 /* ============================================
-   AUTH АНИМАЦИИ (вне @layer — глобальные keyframes)
+   ANIMATIONS
    ============================================ */
 
-/* Карточка появляется снизу со scale — ощущение «всплытия».
-   cubic-bezier(0.22, 1, 0.36, 1) — упругий easing, быстрый финиш. */
 @keyframes auth-card-in {
-  from {
-    opacity: 0;
-    transform: translateY(24px) scale(0.98);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
+  from { opacity: 0; transform: translateY(24px) scale(0.98); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
 }
 
-/* Медленный дрейф декоративных слов на фоне.
-   Каждое слово использует разные duration и delay в компоненте,
-   поэтому движения выглядят независимыми. */
 @keyframes auth-drift {
-  from {
-    transform: translate(0, 0) rotate(-1deg);
-  }
-  to {
-    transform: translate(2%, 3%) rotate(1deg);
-  }
+  from { transform: translate(0, 0) rotate(-1deg); }
+  to   { transform: translate(2%, 3%) rotate(1deg); }
 }
 
-/* Мигание трёх точек в кнопке при загрузке.
-   40% — пик яркости, остальное — затухание. */
 @keyframes auth-blink {
-  0%,
-  80%,
-  100% {
-    opacity: 0.2;
-    transform: scale(0.8);
-  }
-  40% {
-    opacity: 1;
-    transform: scale(1);
-  }
+  0%, 80%, 100% { opacity: 0.2; transform: scale(0.8); }
+  40%           { opacity: 1;   transform: scale(1); }
 }
-
-/* ============================================
-   АНИМАЦИИ
-   ============================================ */
 
 @keyframes slideIn {
-  from {
-    opacity: 0;
-    transform: translateY(12px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+  from { opacity: 0; }
+  to   { opacity: 1; }
 }
 
 @keyframes scaleIn {
-  from {
-    opacity: 0;
-    transform: scale(0.95);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
+  from { opacity: 0; transform: scale(0.95); }
+  to   { opacity: 1; transform: scale(1); }
 }
 
-.animate-slide-in {
-  animation: slideIn var(--transition-slower) ease-out;
-}
-
-.animate-fade-in {
-  animation: fadeIn var(--transition-base) ease-out;
-}
-
-.animate-scale-in {
-  animation: scaleIn var(--transition-slower) ease-out;
-}
+.animate-slide-in  { animation: slideIn  var(--transition-slower) ease-out; }
+.animate-fade-in   { animation: fadeIn   var(--transition-base)    ease-out; }
+.animate-scale-in  { animation: scaleIn  var(--transition-slower) ease-out; }
 
 /* ============================================
-   АДАПТИВНЫЕ УТИЛИТЫ
+   LAYOUT CONTAINERS
    ============================================ */
 
-/* Контейнеры с максимальной шириной */
-.container-sm {
-  max-width: var(--content-width-sm);
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.container-md {
-  max-width: var(--content-width-md);
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.container-lg {
-  max-width: var(--content-width-lg);
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.container-xl {
-  max-width: var(--content-width-xl);
-  margin-left: auto;
-  margin-right: auto;
-}
-
-/* @import "tailwindcss";
-@import "./variables.css";
-
-@tailwind utilities;
-
-@layer base {
-
-  * {
-    font-family: 'Inter', sans-serif;
-  }
-
-  body {
-    font-family:
-      -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
-      "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
-      sans-serif;
-    @apply bg-(--background-body) text-(--text-primary) antialiased;
-    line-height: var(--leading-normal);
-    font-size: var(--text-base);
-  }
-
-  h1 {
-    font-size: var(--text-4xl);
-    font-weight: 700;
-    line-height: var(--leading-tight);
-    color: var(--text-primary);
-  }
-
-  h2 {
-    font-size: var(--text-2xl);
-    font-weight: 600;
-    line-height: var(--leading-tight);
-    color: var(--text-primary);
-  }
-
-  h3 {
-    font-size: var(--text-xl);
-    font-weight: 600;
-    line-height: var(--leading-normal);
-    color: var(--text-primary);
-  }
-
-  h4 {
-    font-size: var(--text-lg);
-    font-weight: 500;
-    line-height: var(--leading-normal);
-    color: var(--text-primary);
-  }
-
-  .no-scrollbar::-webkit-scrollbar {
-    display: none;
-  }
-
-  .no-scrollbar {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-  }
-}
-
-   @utility btn-neo {
-    @apply px-6 py-3 rounded-2xl bg-(--neo-background) shadow-(--neo-shadow)
-    transition-all duration-200 font-medium
-    hover:shadow-(--neo-shadow-sm) active:shadow-(--neo-shadow-inset);
-  }
-
-@utility btn {
-  @apply inline-flex items-center justify-center gap-2 px-4 py-2.5
-            rounded-lg font-medium text-sm
-            transition-all duration-(--transition-base)
-            focus:outline-none focus:ring-2 focus:ring-offset-2
-            disabled:opacity-50 disabled:cursor-not-allowed;
-}
-
-@utility card {
-  @apply bg-(--background-card) rounded-xl border border-(--gray-200)
-           shadow-sm hover:shadow-md
-           transition-shadow duration-(--transition-base);
-}
-
-@utility badge {
-  @apply inline-flex items-center gap-1.5 px-3 py-1
-           rounded-full text-xs font-medium
-           transition-colors duration-(--transition-fast);
-}
-
-@utility input {
-  @apply w-full px-4 py-2.5 rounded-lg
-           bg-white border border-(--gray-300)
-           text-(--text-primary) placeholder:text-(--text-tertiary)
-           focus:outline-none focus:ring-2 focus:ring-(--primary-500) focus:border-transparent
-           transition-all duration-(--transition-fast)
-           disabled:bg-(--gray-100) disabled:cursor-not-allowed;
-}
-
-@utility select {
-  @apply input appearance-none cursor-pointer
-
-           bg-[length:1.5em] bg-[right_0.5rem_center] bg-no-repeat pr-10;
-}
-
-@utility progress {
-  @apply w-full h-2 rounded-full bg-(--gray-200) overflow-hidden;
-}
-
-@utility stats-grid {
-  @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4;
-}
-
-@utility divider {
-  @apply border-t border-(--gray-200) my-6;
-}
-
-@utility icon-wrapper {
-  @apply flex items-center justify-center w-12 h-12 rounded-lg
-           transition-all duration-(--transition-base);
-}
-
-@utility list-section {
-  @apply space-y-3;
-}
-
-@utility avatar {
-  @apply w-10 h-10 rounded-full bg-gradient-to-br from-(--primary-400) to-(--primary-600)
-           flex items-center justify-center text-white font-semibold text-sm
-           shadow-md;
-}
-
-@utility nav-link {
-  @apply px-4 py-2 rounded-lg text-sm font-medium
-           text-(--text-secondary)
-           hover:text-(--text-primary) hover:bg-(--background-hover)
-           transition-colors duration-(--transition-fast)
-           cursor-pointer;
-}
-
-@utility progress-fill {
-  @apply h-full rounded-full transition-all duration-(--transition-slow);
-}
-@layer components {
-
-  .btn-primary {
-    @apply btn bg-(--primary-600) text-white
-           hover:bg-(--primary-700)
-           active:bg-(--primary-800)
-           focus:ring-(--primary-500)
-           shadow-sm hover:shadow-md;
-  }
-
-  .btn-secondary {
-    @apply btn bg-white text-(--text-primary) border border-(--gray-300)
-           hover:bg-(--background-hover)
-           active:bg-(--background-active)
-           focus:ring-(--gray-400)
-           shadow-sm;
-  }
-
-  .btn-ghost {
-    @apply btn bg-transparent text-(--text-secondary)
-           hover:bg-(--background-hover)
-           hover:text-(--text-primary)
-           active:bg-(--background-active)
-           focus:ring-(--gray-400);
-  }
-
-  .btn-danger {
-    @apply btn bg-(--error-500) text-white
-           hover:bg-(--error-600)
-           focus:ring-(--error-500)
-           shadow-sm;
-  }
-
-  .btn-icon {
-    @apply btn aspect-square p-2.5;
-  }
-
-  .btn-add {
-    @apply flex items-center justify-center w-12 h-12 rounded-full
-           bg-white border-2 border-dashed border-(--gray-300)
-           text-(--gray-400) text-xl
-           hover:border-(--primary-500) hover:text-(--primary-600)
-           hover:bg-(--primary-50)
-           transition-all duration-(--transition-base)
-           cursor-pointer shadow-sm hover:shadow-md;
-  }
-
-  .card-padded {
-    @apply card p-6;
-  }
-
-  .category-card {
-    @apply card p-6 cursor-pointer
-           transition-all duration-(--transition-base);
-  }
-
-  .category-card-books {
-    @apply border-l-4 border-l-(--books-500)
-           hover:bg-(--books-50);
-  }
-
-  .category-card-movies {
-    @apply border-l-4 border-l-(--movies-500)
-           hover:bg-(--movies-50);
-  }
-
-  .category-card-games {
-    @apply border-l-4 border-l-(--games-500)
-           hover:bg-(--games-50);
-  }
-
-  .media-card {
-    @apply card flex gap-4 p-4
-           hover:border-(--gray-300)
-           transition-all duration-(--transition-base);
-  }
-
-  .badge-backlog {
-    @apply badge bg-(--warning-50) text-(--warning-600)
-           border border-(--warning-200);
-  }
-
-  .badge-in-progress {
-    @apply badge bg-(--info-50) text-(--info-600)
-           border border-(--info-200);
-  }
-
-  .badge-completed {
-    @apply badge bg-(--success-50) text-(--success-600)
-           border border-(--success-200);
-  }
-
-  .badge-dropped {
-    @apply badge bg-(--error-50) text-(--error-600)
-           border border-(--error-200);
-  }
-
-  .badge-wishlist {
-    @apply badge bg-(--gray-100) text-(--gray-700)
-           border border-(--gray-300);
-  }
-
-  .input-error {
-    @apply input border-(--error-500) focus:ring-(--error-500);
-  }
-
-  .progress-fill-books {
-    @apply progress-fill bg-gradient-to-r from-(--books-400) to-(--books-600);
-  }
-
-  .progress-fill-movies {
-    @apply progress-fill bg-gradient-to-r from-(--movies-400) to-(--movies-600);
-  }
-
-  .progress-fill-games {
-    @apply progress-fill bg-gradient-to-r from-(--games-400) to-(--games-600);
-  }
-
-  .icon-wrapper-books {
-    @apply icon-wrapper bg-(--books-100) text-(--books-600);
-  }
-
-  .icon-wrapper-movies {
-    @apply icon-wrapper bg-(--movies-100) text-(--movies-600);
-  }
-
-  .icon-wrapper-games {
-    @apply icon-wrapper bg-(--games-100) text-(--games-600);
-  }
-
-  .list-header {
-    @apply flex items-center justify-between pb-3 border-b border-(--gray-200);
-  }
-
-  .list-title {
-    @apply text-lg font-semibold text-(--text-primary) flex items-center gap-2;
-  }
-
-  .list-count {
-    @apply text-sm text-(--text-tertiary) font-normal;
-  }
-
-  .nav-link-active {
-    @apply nav-link bg-(--primary-50) text-(--primary-600)
-           hover:bg-(--primary-100);
-  }
-
-  .media-grid {
-    @apply grid grid-cols-1 gap-3;
-  }
-
-  .text-ellipsis-2 {
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
-
-  .text-ellipsis-3 {
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
-
-  .skeleton {
-    @apply bg-(--gray-200) animate-pulse rounded;
-  }
-}
-
-@keyframes slideIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-.animate-slide-in {
-  animation: slideIn var(--transition-base) ease-out;
-}
-
-.animate-fade-in {
-  animation: fadeIn var(--transition-base) ease-out;
-}
-
-@layer base {
-  body {
-    font-family: Arial, Helvetica, sans-serif;
-    @apply bg-(--neo-background-body) text-gray-800;
-  }
-
-  .no-scrollbar::-webkit-scrollbar {
-    display: none;
-  }
-
-  .no-scrollbar {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-  }
-}
-
-@layer components {
-  .btn-neo-primary {
-    @apply btn-neo text-(--primary-600);
-  }
-
-  .card-neo {
-    @apply bg-(--neo-background) rounded-xl p-6 outline-1 outline-gray-300 shadow-(--neo-shadow);
-  }
-
-  .input-neo {
-    @apply w-full px-4 py-3 rounded-2xl bg-(--neo-background) shadow-(--neo-shadow-inset)
-           border-none focus:outline-none focus:ring-2 focus:ring-(--primary-400);
-  }
-
-  .btn-add-1 {
-    @apply p-5 rounded-xl bg-(--neo-background) shadow-(--neo-shadow) outline-1 outline-gray-300
-           flex items-center justify-center text-2xl text-gray-600 cursor-pointer
-           hover:shadow-(--neo-shadow-sm) hover:text-(--primary-600)
-           active:shadow-(--neo-shadow-inset) transition-all duration-200;
-  }
-
-  .progress-neo {
-    @apply w-full h-3 rounded-full bg-(--neo-background) shadow-(--neo-shadow-inset) overflow-hidden;
-  }
-
-  .progress-fill {
-    @apply h-full bg-gradient-to-r from-(--primary-400) to-(--primary-600) rounded-full;
-  }
-}
- */
+.container-sm  { max-width: var(--content-width-sm);  margin-left: auto; margin-right: auto; }
+.container-md  { max-width: var(--content-width-md);  margin-left: auto; margin-right: auto; }
+.container-lg  { max-width: var(--content-width-lg);  margin-left: auto; margin-right: auto; }
+.container-xl  { max-width: var(--content-width-xl);  margin-left: auto; margin-right: auto; }

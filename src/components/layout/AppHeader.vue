@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useAuthStore } from '@/stores/auth'
+import ThemeToggle from "./ThemeToggle.vue"
 
 const authStore = useAuthStore()
 
@@ -20,16 +21,17 @@ const userInitials = computed(() => {
     <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between items-center h-16">
         <router-link
-          to="/"
-          class="text-4xl font-extrabold text-primary-600 hover:text-primary-700 transition-colors"
+        to="/"
+        class="text-4xl font-extrabold text-primary-600 hover:text-primary-700 transition-colors"
         >
-          Media Archive
-        </router-link>
+        Media Archive
+      </router-link>
 
-        <div class="flex items-center space-x-4">
-          <template v-if="authStore.isAuthenticated">
+      <div class="flex items-center space-x-4">
+        <ThemeToggle />
+        <template v-if="authStore.isAuthenticated">
             <router-link
-              to="/my-lists"
+              :to="{ path: '/', hash: '#my-lists' }"
               class="px-4 py-2 rounded-xl text-gray-700 hover:text-primary-600 transition-colors"
             >
               Мои списки

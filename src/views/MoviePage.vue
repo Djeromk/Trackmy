@@ -36,50 +36,22 @@ import {
 const route = useRoute();
 const router = useRouter();
 const mediaStore = useMediaStore();
-
-/**
- * ID фильма/сериала из параметров URL.
- * Передаётся в API Кинопоиска и используется для поиска
- * записи в списке пользователя (по external_id).
- */
 const movieId: string = route.params.id as string;
-
-/** Данные о фильме/сериале, полученные из API Кинопоиска */
 const movie = ref<KinopoiskItemByID | null>(null);
-
-/** Флаг загрузки для отображения спиннера */
 const loading = ref<boolean>(true);
-
-/** Текст ошибки при неудачном запросе */
 const error = ref<string | null>(null);
 
-/**
- * Ищет запись пользователя для текущего фильма.
- * Используем external_id медиа-элемента для сопоставления.
- * Нужно для: отображения статуса, рейтинга, прогресса сериала.
- */
 const userMediaEntry = computed(() =>
   findUserMediaEntry(mediaStore.userMedia, movieId)
 );
 
-/**
- * Текущий статус фильма в списке пользователя.
- * null = не добавлен.
- */
 const currentStatus = computed(() => userMediaEntry.value?.status ?? null);
 
-/**
- * Тип контента для отображения в UI:
- * "Сериал" или "Фильм"
- */
 const contentTypeLabel = computed(() => {
   if (!movie.value) return "";
   return movie.value.serial ? "Сериал" : "Фильм";
 });
 
-/**
- * Иконка для типа контента
- */
 const ContentTypeIcon = computed(() => {
   if (!movie.value) return Film;
   return movie.value.type === "TV_SHOW" ? Tv : Film;
@@ -101,22 +73,12 @@ onMounted(async () => {
   }
 });
 
-/**
- * Добавляет фильм в список пользователя с нужным статусом.
- * Трансформирует данные Кинопоиска в формат ExternalMovie
- * перед сохранением.
- */
 async function handleAddMovie(status: MediaStatus) {
   if (!movie.value) return;
   const mediaItem = transformKinopoiskToExternalMovie(movie.value);
   await mediaStore.addMediaFromExternal(mediaItem, "movie", status);
 }
 
-/**
- * Обновляет статус уже добавленного фильма.
- * Использует createStatusUpdatePayload для формирования
- * объекта обновления (статус + флаги завершения).
- */
 async function handleUpdateStatus(status: MediaStatus) {
   if (!userMediaEntry.value || status === currentStatus.value) return;
   const updates = createStatusUpdatePayload(status);
@@ -126,8 +88,6 @@ async function handleUpdateStatus(status: MediaStatus) {
 
 <template>
   <div class="min-h-screen bg-(--background-body)">
-
-    <!-- Верхняя навигационная полоса -->
     <div class="border-b border-(--border-color) bg-(--background-card)">
       <div class="max-w-5xl mx-auto px-6 py-4">
         <button
@@ -141,14 +101,11 @@ async function handleUpdateStatus(status: MediaStatus) {
     </div>
 
     <div class="max-w-5xl mx-auto px-6 py-10">
-
-      <!-- Состояние загрузки -->
       <div v-if="loading" class="flex flex-col items-center justify-center py-32 gap-4">
         <Loader :size="40" class="text-(--primary-500) animate-spin" />
         <p class="text-sm text-(--text-tertiary)">Загрузка информации...</p>
       </div>
 
-      <!-- Состояние ошибки -->
       <div v-else-if="error" class="flex flex-col items-center justify-center py-32 gap-4">
         <div class="w-16 h-16 rounded-full bg-(--gray-100) flex items-center justify-center">
           <Film :size="28" class="text-(--gray-400)" />
@@ -158,16 +115,9 @@ async function handleUpdateStatus(status: MediaStatus) {
           Вернуться назад
         </button>
       </div>
-
-      <!-- Основной контент страницы фильма/сериала -->
       <div v-else-if="movie" class="flex flex-col lg:flex-row gap-10">
 
-        <!-- ═══════════════════════════════════
-             ЛЕВАЯ КОЛОНКА: постер + управление
-             ═══════════════════════════════════ -->
         <div class="w-full lg:w-64 shrink-0 flex flex-col gap-4">
-
-          <!-- Постер с hover-эффектом масштабирования -->
           <div class="relative group">
             <div class="rounded-2xl overflow-hidden shadow-(--shadow-lg) ring-1 ring-black/5 transition-transform duration-300 group-hover:scale-[1.02]">
               <MediaPoster
@@ -176,8 +126,6 @@ async function handleUpdateStatus(status: MediaStatus) {
                 fallback-icon="film"
               />
             </div>
-
-            <!-- Бейдж типа контента поверх постера -->
             <div
               class="absolute top-3 left-3 flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold text-white"
               :class="movie.serial ? 'bg-(--primary-600)' : 'bg-(--gray-700)'"

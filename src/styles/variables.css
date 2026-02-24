@@ -1,26 +1,111 @@
 :root {
 	/* ============================================
-	   ЕДИНАЯ ЦВЕТОВАЯ СИСТЕМА - Modern SaaS UI
-	   Философия: Один акцентный цвет (синий) + нейтральные оттенки
+	   DARKMATTER THEME — LIGHT MODE (по умолчанию)
+	   tweakcn.com
 	   ============================================ */
 
-	/* PRIMARY - Единственный акцентный цвет (синий) */
-	--primary-50: #eff6ff;
-	--primary-100: #dbeafe;
-	--primary-200: #bfdbfe;
-	--primary-300: #93c5fd;
-	--primary-400: #60a5fa;
-	--primary-500: #3b82f6;   /* Основной синий - используется везде */
-	--primary-600: #2563eb;   /* Темнее для hover */
-	--primary-700: #1d4ed8;   /* Еще темнее для active */
-	--primary-800: #1e40af;
-	--primary-900: #1e3a8a;
-	--green-50: #0de423;
-	--green-600: #29b036;
+	/* BASE PALETTE */
+	--background: #ffffff;
+	--foreground: #111827;
+	--card: #ffffff;
+	--card-foreground: #111827;
+	--popover: #ffffff;
+	--popover-foreground: #111827;
+	--primary: #d87943;
+	--primary-foreground: #ffffff;
+	--secondary: #527575;
+	--secondary-foreground: #ffffff;
+	--muted: #f3f4f6;
+	--muted-foreground: #6b7280;
+	--accent: #eeeeee;
+	--accent-foreground: #111827;
+	--destructive: #ef4444;
+	--destructive-foreground: #fafafa;
+	--border: #e5e7eb;
+	--input: #e5e7eb;
+	--ring: #d87943;
 
-	/* НЕЙТРАЛЬНЫЕ ЦВЕТА (серые) - основа интерфейса */
-	--gray-25: #fcfcfd;       /* Почти белый */
-	--gray-50: #f9fafb;
+	/* CHART */
+	--chart-1: #5f8787;
+	--chart-2: #e78a53;
+	--chart-3: #fbcb97;
+	--chart-4: #888888;
+	--chart-5: #999999;
+
+	/* SIDEBAR */
+	--sidebar: #f3f4f6;
+	--sidebar-foreground: #111827;
+	--sidebar-primary: #d87943;
+	--sidebar-primary-foreground: #ffffff;
+	--sidebar-accent: #ffffff;
+	--sidebar-accent-foreground: #111827;
+	--sidebar-border: #e5e7eb;
+	--sidebar-ring: #d87943;
+
+	/* FONT */
+	--font-sans: "Geist Mono", ui-monospace, monospace;
+	--font-mono: "Geist Mono", ui-monospace, monospace;
+
+	/* RADIUS */
+	--radius: 0.75rem;
+	--border-radius-sm:   calc(var(--radius) - 4px);
+	--border-radius-base: calc(var(--radius) - 2px);
+	--border-radius-md:   var(--radius);
+	--border-radius-lg:   calc(var(--radius) + 4px);
+	--border-radius-xl:   calc(var(--radius) + 8px);
+	--border-radius-full: 9999px;
+
+	/* SHADOWS */
+	--shadow-2xs: 0px 1px 4px 0px hsl(0 0% 0% / 0.03);
+	--shadow-xs:  0px 1px 4px 0px hsl(0 0% 0% / 0.03);
+	--shadow-sm:  0px 1px 4px 0px hsl(0 0% 0% / 0.05), 0px 1px 2px -1px hsl(0 0% 0% / 0.05);
+	--shadow-base:0px 1px 4px 0px hsl(0 0% 0% / 0.08);
+	--shadow-md:  0px 1px 4px 0px hsl(0 0% 0% / 0.05), 0px 2px 4px -1px hsl(0 0% 0% / 0.05);
+	--shadow-lg:  0px 1px 4px 0px hsl(0 0% 0% / 0.05), 0px 4px 6px -1px hsl(0 0% 0% / 0.05);
+	--shadow-xl:  0px 1px 4px 0px hsl(0 0% 0% / 0.05), 0px 8px 10px -1px hsl(0 0% 0% / 0.05);
+	--shadow-2xl: 0px 1px 4px 0px hsl(0 0% 0% / 0.13);
+
+	/* ============================================
+	   СЕМАНТИЧЕСКИЕ АЛИАСЫ — используются в компонентах
+	   ============================================ */
+
+	/* BACKGROUNDS */
+	--background-body:     #f9fafb;
+	--background-card:     #ffffff;
+	--background-elevated: #ffffff;
+	--background-hover:    #f3f4f6;
+	--background-active:   #eeeeee;
+	--background-subtle:   #f9fafb;
+
+	/* BORDERS */
+	--border-color:        #e5e7eb;
+	--border-color-strong: #d1d5db;
+	--border-color-subtle: #f3f4f6;
+	--border-width: 1px;
+
+	/* TEXT */
+	--text-primary:   #111827;
+	--text-secondary: #374151;
+	--text-tertiary:  #6b7280;
+	--text-disabled:  #9ca3af;
+	--text-inverse:   #ffffff;
+	--text-link:      #d87943;
+
+	/* PRIMARY — оранжево-коричневый акцент Darkmatter */
+	--primary-50:  #fdf6f0;
+	--primary-100: #fae8d8;
+	--primary-200: #f5cfad;
+	--primary-300: #efb07a;
+	--primary-400: #e89054;
+	--primary-500: #d87943;
+	--primary-600: #c06430;
+	--primary-700: #9f4f24;
+	--primary-800: #7d3d1c;
+	--primary-900: #5e2e15;
+
+	/* GRAY — стандартная шкала Tailwind */
+	--gray-25:  #fcfcfd;
+	--gray-50:  #f9fafb;
 	--gray-100: #f3f4f6;
 	--gray-200: #e5e7eb;
 	--gray-300: #d1d5db;
@@ -30,273 +115,330 @@
 	--gray-700: #374151;
 	--gray-800: #1f2937;
 	--gray-900: #111827;
-	--gray-950: #030712;      /* Почти черный */
+	--gray-950: #030712;
 
-	/* ============================================
-	   СЕМАНТИЧЕСКИЕ ЦВЕТА - СТАТУСЫ
-	   Логика: оттенки primary для активных состояний
-	   ============================================ */
+	/* SECONDARY — сине-зелёный #527575 */
+	--secondary-500: #527575;
+	--secondary-100: #e8f0f0;
+	--secondary-200: #c8dcdc;
 
-	/* BACKLOG - нейтральный серый (не требует внимания) */
-	--status-backlog-bg: var(--gray-100);
-	--status-backlog-text: var(--gray-700);
-	--status-backlog-border: var(--gray-300);
+	/* STATUS COLORS */
+	--status-backlog-bg:      #f3f4f6;
+	--status-backlog-text:    #374151;
+	--status-backlog-border:  #d1d5db;
 
-	/* IN PROGRESS - primary синий (активное действие) */
-	--status-progress-bg: var(--primary-50);
-	--status-progress-text: var(--primary-700);
-	--status-progress-border: var(--primary-200);
+	--status-progress-bg:     #fdf6f0;
+	--status-progress-text:   #9f4f24;
+	--status-progress-border: #f5cfad;
 
-	/* COMPLETED - светлый primary (успех, но спокойный) */
-	--status-completed-bg: var(--primary-100);
-	--status-completed-text: var(--primary-800);
-	--status-completed-border: var(--primary-300);
+	--status-completed-bg:    #e8f0f0;
+	--status-completed-text:  #3a5c5c;
+	--status-completed-border:#c8dcdc;
 
-	/* DROPPED - темный серый (неактуально) */
-	--status-dropped-bg: var(--gray-100);
-	--status-dropped-text: var(--gray-600);
-	--status-dropped-border: var(--gray-300);
+	--status-dropped-bg:      #f3f4f6;
+	--status-dropped-text:    #6b7280;
+	--status-dropped-border:  #e5e7eb;
 
-	/* WISHLIST - средний серый (планы) */
-	--status-wishlist-bg: var(--gray-50);
-	--status-wishlist-text: var(--gray-600);
-	--status-wishlist-border: var(--gray-200);
+	--status-wishlist-bg:     #f9fafb;
+	--status-wishlist-text:   #6b7280;
+	--status-wishlist-border: #e5e7eb;
 
-	/* ============================================
-	   КАТЕГОРИИ МЕДИА
-	   Используем тонкие вариации primary для различия
-	   ============================================ */
+	/* CATEGORY COLORS */
+	--category-books-bg:      #527575;   /* secondary — сине-зелёный */
+	--category-books-primary: #527575;
+	--category-books-light:   #e8f0f0;
 
-	/* Книги */
-	--category-books-primary: var(--primary-500);
-	--category-books-light: var(--primary-100);
-	--category-books-bg: #0ab7f1d1;
+	--category-movies-bg:     #ad3e00;   /* primary — оранжевый */
+	--category-movies-primary:#ad3e00;
+	--category-movies-light:  #fae8d8;
 
-	/* Фильмы и Сериалы */
-	--category-movies-primary: var(--primary-600);
-	--category-movies-light: var(--primary-200);
-	--category-movies-bg: #0a6ef1d4;
+	--category-games-bg:      #7c5cbf;   /* фиолетовый — дополнительный акцент */
+	--category-games-primary: #7c5cbf;
+	--category-games-light:   #ede8f7;
 
-	/* Игры */
-	--category-games-primary: var(--primary-700);
-	--category-games-light: var(--primary-300);
-	--category-games-bg: #6e35dfd4;
+	/* SEMANTIC COLORS */
+	--success-50:  #f0fdf4;
+	--success-500: #22c55e;
+	--success-600: #16a34a;
 
-	/* ============================================
-	   ФОНЫ И ПОВЕРХНОСТИ
-	   ============================================ */
+	--error-50:  #fef2f2;
+	--error-500: #ef4444;
+	--error-600: #dc2626;
 
-	--background-body: var(--gray-25);
-	--background-card: #ffffff;
-	--background-elevated: #ffffff;
-	--background-hover: var(--gray-50);
-	--background-active: var(--gray-100);
-	--background-subtle: var(--gray-50);
+	--warning-50:  #fffbeb;
+	--warning-500: #f59e0b;
+	--warning-600: #d97706;
 
-	/* ============================================
-	   ГРАНИЦЫ
-	   ============================================ */
+	--info-50:  #eff6ff;
+	--info-600: #2563eb;
 
-	--border-color: var(--gray-200);
-	--border-color-strong: var(--gray-300);
-	--border-color-subtle: var(--gray-100);
-
-	--border-width: 1px;
-	--border-radius-sm: 0.375rem;
-	--border-radius-base: 0.5rem;
-	--border-radius-md: 0.75rem;
-	--border-radius-lg: 1rem;
-	--border-radius-xl: 1.5rem;
-	--border-radius-full: 9999px;
-
-	/* ============================================
-	   ТЕНИ - Modern SaaS стиль
-	   ============================================ */
-
-	--shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.03);
-	--shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.06);
-	--shadow-base: 0 1px 4px 0 rgb(0 0 0 / 0.08);
-	--shadow-md: 0 4px 8px -2px rgb(0 0 0 / 0.08);
-	--shadow-lg: 0 12px 24px -4px rgb(0 0 0 / 0.08);
-	--shadow-xl: 0 20px 32px -8px rgb(0 0 0 / 0.08);
-
-	/* ============================================
-	   ТИПОГРАФИКА - УСИЛЕННЫЙ КОНТРАСТ
-	   ============================================ */
-
-	--text-primary: var(--gray-950);
-	--text-secondary: var(--gray-700);
-	--text-tertiary: var(--gray-500);
-	--text-disabled: var(--gray-400);
-	--text-inverse: #ffffff;
-	--text-link: var(--primary-600);
-
-	--text-xs: 0.6875rem;
-	--text-sm: 0.8125rem;
+	/* TYPOGRAPHY */
+	--text-xs:   0.6875rem;
+	--text-sm:   0.8125rem;
 	--text-base: 0.9375rem;
-	--text-md: 1rem;
-	--text-lg: 1.125rem;
-	--text-xl: 1.375rem;
-	--text-2xl: 1.75rem;
-	--text-3xl: 2.25rem;
-	--text-4xl: 3rem;
-	--text-5xl: 3.75rem;
+	--text-md:   1rem;
+	--text-lg:   1.125rem;
+	--text-xl:   1.375rem;
+	--text-2xl:  1.75rem;
+	--text-3xl:  2.25rem;
+	--text-4xl:  3rem;
+	--text-5xl:  3.75rem;
 
-	--font-normal: 400;
-	--font-medium: 500;
-	--font-semibold: 600;
-	--font-bold: 700;
+	--font-normal:    400;
+	--font-medium:    500;
+	--font-semibold:  600;
+	--font-bold:      700;
 	--font-extrabold: 800;
 
-	--leading-none: 1;
-	--leading-tight: 1.15;
-	--leading-snug: 1.375;
-	--leading-normal: 1.5;
+	--leading-none:    1;
+	--leading-tight:   1.15;
+	--leading-snug:    1.375;
+	--leading-normal:  1.5;
 	--leading-relaxed: 1.625;
-	--leading-loose: 2;
+	--leading-loose:   2;
 
 	--tracking-tighter: -0.03em;
-	--tracking-tight: -0.015em;
-	--tracking-normal: 0;
-	--tracking-wide: 0.015em;
-	--tracking-wider: 0.03em;
+	--tracking-tight:   -0.015em;
+	--tracking-normal:  0;
+	--tracking-wide:    0.015em;
+	--tracking-wider:   0.03em;
 
-	/* ============================================
-	   SPACING
-	   ============================================ */
-
-	--spacing-px: 1px;
-	--spacing-0: 0;
-	--spacing-1: 0.25rem;
-	--spacing-2: 0.5rem;
-	--spacing-3: 0.75rem;
-	--spacing-4: 1rem;
-	--spacing-5: 1.25rem;
-	--spacing-6: 1.5rem;
-	--spacing-7: 1.75rem;
-	--spacing-8: 2rem;
-	--spacing-10: 2.5rem;
+	/* SPACING */
+	--spacing-1:  0.25rem;
+	--spacing-2:  0.5rem;
+	--spacing-3:  0.75rem;
+	--spacing-4:  1rem;
+	--spacing-6:  1.5rem;
+	--spacing-8:  2rem;
 	--spacing-12: 3rem;
-	--spacing-16: 4rem;
-	--spacing-20: 5rem;
-	--spacing-24: 6rem;
 
-	/* ============================================
-	   ПЕРЕХОДЫ И АНИМАЦИИ
-	   ============================================ */
-
-	--transition-fast: 100ms cubic-bezier(0.4, 0, 0.2, 1);
-	--transition-base: 150ms cubic-bezier(0.4, 0, 0.2, 1);
-	--transition-slow: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+	/* TRANSITIONS */
+	--transition-fast:   100ms cubic-bezier(0.4, 0, 0.2, 1);
+	--transition-base:   150ms cubic-bezier(0.4, 0, 0.2, 1);
+	--transition-slow:   200ms cubic-bezier(0.4, 0, 0.2, 1);
 	--transition-slower: 300ms cubic-bezier(0.4, 0, 0.2, 1);
 
-	--ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
-	--ease-out: cubic-bezier(0, 0, 0.2, 1);
-	--ease-in: cubic-bezier(0.4, 0, 1, 1);
-
-	/* ============================================
-	   Z-INDEX СЛОИ
-	   ============================================ */
-
-	--z-base: 0;
-	--z-dropdown: 1000;
-	--z-sticky: 1100;
-	--z-fixed: 1200;
+	/* Z-INDEX */
+	--z-dropdown:       1000;
+	--z-sticky:         1100;
 	--z-modal-backdrop: 1300;
-	--z-modal: 1400;
-	--z-popover: 1500;
-	--z-tooltip: 1600;
+	--z-modal:          1400;
+	--z-tooltip:        1600;
 
-	/* ============================================
-	   ШИРИНА КОНТЕНТА
-	   ============================================ */
+	/* CONTENT WIDTH */
+	--content-width-sm:  640px;
+	--content-width-md:  768px;
+	--content-width-lg:  1024px;
+	--content-width-xl:  1280px;
 
-	--content-width-sm: 640px;
-	--content-width-md: 768px;
-	--content-width-lg: 1024px;
-	--content-width-xl: 1280px;
-	--content-width-2xl: 1536px;
+
 
 	/* ============================================
 	   AUTH PAGES
-	   Отдельная тёмная тема для страниц Login и Register.
-	   Изолирована от основной светлой системы — все auth-компоненты
-	   читают только переменные с префиксом --auth-*.
+	   Тёмный фон остаётся только для auth-страниц —
+	   это намеренный дизайн-контраст (тёмная обёртка,
+	   полупрозрачная карточка поверх).
+	   Переменные изолированы с префиксом --auth-*.
 	   ============================================ */
 
-	/* Фон страницы — очень тёмный синевато-чёрный.
-	   Не чистый #000 чтобы не давил на глаза. */
-	--auth-bg: #080b10;
+	--auth-bg:          #0f0e10;
+	--auth-grid-color:  rgba(216, 121, 67, 0.04);
 
-	/* Сетка линий на фоне — почти невидимая, добавляет текстуру глубины */
-	--auth-grid-color: rgba(255, 255, 255, 0.025);
-
-	/* Стеклянная карточка (glassmorphism).
-	   backdrop-filter: blur() + полупрозрачный фон = эффект стекла. */
-	--auth-card-bg:     rgba(255, 255, 255, 0.044);
-	--auth-card-border: rgba(255, 255, 255, 0.10);
+	--auth-card-bg:     rgba(255, 255, 255, 0.06);
+	--auth-card-border: rgba(216, 121, 67, 0.18);
 	--auth-card-shadow:
-		0 0 0 1px rgba(255, 255, 255, 0.05) inset,
-		0 32px 64px rgba(0, 0, 0, 0.50);
+	  0 0 0 1px rgba(216, 121, 67, 0.08) inset,
+	  0 32px 64px rgba(0, 0, 0, 0.55);
 
-	/* Акцентный голубой — светлее чем --primary-500,
-	   иначе на тёмном фоне тускнеет */
-	--auth-accent:        rgba(99, 180, 255, 0.90);  /* eyebrow, ссылки         */
-	--auth-accent-glow:   rgba(99, 180, 255, 0.10);  /* ring при фокусе input   */
-	--auth-accent-border: rgba(99, 180, 255, 0.50);  /* border input в фокусе   */
+	--auth-accent:        #d87943;
+	--auth-accent-glow:   rgba(216, 121, 67, 0.14);
+	--auth-accent-border: rgba(216, 121, 67, 0.60);
 
-	/* Поля ввода — полупрозрачные тёмные, текст белый */
-	--auth-input-bg:          rgba(255, 255, 255, 0.06);
+	--auth-input-bg:          rgba(255, 255, 255, 0.05);
 	--auth-input-bg-focus:    rgba(255, 255, 255, 0.09);
 	--auth-input-border:      rgba(255, 255, 255, 0.10);
-	--auth-input-text:        #ffffff;
-	--auth-input-placeholder: rgba(255, 255, 255, 0.18);
+	--auth-input-text:        #f3f4f6;
+	--auth-input-placeholder: rgba(255, 255, 255, 0.22);
 
-	/* Текстовые уровни внутри карточки */
-	--auth-label:           rgba(255, 255, 255, 0.40);  /* подписи полей  */
-	--auth-text-muted:      rgba(255, 255, 255, 0.28);  /* footer строки  */
-	--auth-text-very-muted: rgba(255, 255, 255, 0.18);  /* "без аккаунта" */
+	--auth-label:           rgba(255, 255, 255, 0.45);
+	--auth-text-muted:      rgba(255, 255, 255, 0.30);
+	--auth-text-very-muted: rgba(255, 255, 255, 0.18);
 
-	/* Кнопка submit — белая на тёмном (инверсия).
-	   Белая кнопка читается лучше чем синяя на тёмном фоне. */
-	--auth-btn-bg:           #ffffff;
-	--auth-btn-bg-hover:     #e8f0ff;
-	--auth-btn-text:         #080b10;
-	--auth-btn-shadow:       0 4px 20px rgba(255, 255, 255, 0.14);
-	--auth-btn-shadow-hover: 0 8px 28px rgba(255, 255, 255, 0.20);
+	--auth-btn-bg:           #d87943;
+	--auth-btn-bg-hover:     #e78a53;
+	--auth-btn-text:         #ffffff;
+	--auth-btn-shadow:       0 4px 20px rgba(216, 121, 67, 0.35);
+	--auth-btn-shadow-hover: 0 8px 28px rgba(216, 121, 67, 0.50);
 
-	/* Сообщение об ошибке */
-	--auth-error-bg:     rgba(248, 113, 113, 0.09);
-	--auth-error-border: rgba(248, 113, 113, 0.22);
+	--auth-error-bg:     rgba(239, 68, 68, 0.09);
+	--auth-error-border: rgba(239, 68, 68, 0.22);
 	--auth-error-text:   #f87171;
 
-	/* Сообщение об успехе (экран после регистрации) */
-	--auth-success-bg:     rgba(52, 211, 153, 0.15);
-	--auth-success-border: rgba(52, 211, 153, 0.30);
-	--auth-success-text:   #34d399;
+	--auth-success-bg:     rgba(82, 119, 117, 0.18);
+	--auth-success-border: rgba(82, 119, 117, 0.35);
+	--auth-success-text:   #527575;
 
-	/* Живой индикатор совпадения паролей в Register */
-	--auth-match-border:    rgba(52, 211, 153, 0.50);
-	--auth-match-glow:      rgba(52, 211, 153, 0.10);
-	--auth-mismatch-border: rgba(248, 113, 113, 0.45);
-	--auth-mismatch-glow:   rgba(248, 113, 113, 0.10);
+	--auth-match-border:    rgba(82, 119, 117, 0.55);
+	--auth-match-glow:      rgba(82, 119, 117, 0.12);
+	--auth-mismatch-border: rgba(239, 68, 68, 0.48);
+	--auth-mismatch-glow:   rgba(239, 68, 68, 0.12);
 
-	/* Логотип в шапке */
-	--auth-logo-bg:    #ffffff;
-	--auth-logo-text:  #080b10;
+	--auth-logo-bg:    #d87943;
+	--auth-logo-text:  #ffffff;
 	--auth-logo-label: rgba(255, 255, 255, 0.50);
 
-	/* Декоративные огромные слова на фоне (FILM / READ / PLAY…).
-	   Почти невидимые — создают атмосферу без отвлечения. */
-	--auth-poster-color: rgba(255, 255, 255, 0.02);
+	--auth-poster-color: rgba(216, 121, 67, 0.035);
+	--auth-glow-color:   rgba(216, 121, 67, 0.07);
 
-	/* Радиальное свечение под карточкой */
-	--auth-glow-color: rgba(99, 180, 255, 0.06);
+	--auth-font-display: "Geist Mono", ui-monospace, monospace;
+	--auth-font-body:    "Geist Mono", ui-monospace, monospace;
+  }
+  /*
+  Этот блок добавляется В КОНЕЦ существующего variables.css —
+  после закрывающей скобки :root { }.
 
-	/* Шрифтовые семейства.
-	   Syne — геометрический гротеск для заголовков и кнопок.
-	   Epilogue — нейтральный читаемый для полей и подписей.
-	   Подключаются через @import в style.css. */
-	--auth-font-display: 'Syne', sans-serif;
-	--auth-font-body:    'Epilogue', sans-serif;
-}
+  Когда useTheme() вешает класс .dark на <html>,
+  все CSS-переменные внутри этого блока перекрывают значения из :root.
+  Компоненты не меняются — они всегда читают var(--text-primary) и т.д.
+*/
+
+.dark {
+	/* ============================================
+	   DARKMATTER — DARK MODE
+	   Тёмный фон #121113, оранжевый акцент #e78a53
+	   ============================================ */
+
+	/* BASE PALETTE */
+	--background: #121113;
+	--foreground: #c1c1c1;
+	--card: #121212;
+	--card-foreground: #c1c1c1;
+	--popover: #121113;
+	--popover-foreground: #c1c1c1;
+	--primary: #e78a53;
+	--primary-foreground: #121113;
+	--secondary: #5f8787;
+	--secondary-foreground: #121113;
+	--muted: #222222;
+	--muted-foreground: #888888;
+	--accent: #333333;
+	--accent-foreground: #c1c1c1;
+	--destructive: #ef4444;
+	--destructive-foreground: #fafafa;
+	--border: #222222;
+	--input: #222222;
+	--ring: #e78a53;
+
+	/* BACKGROUNDS */
+	--background-body:     #0e0e0f;
+	--background-card:     #121212;
+	--background-elevated: #1a1a1b;
+	--background-hover:    #1e1e1f;
+	--background-active:   #252526;
+	--background-subtle:   #161617;
+
+	/* BORDERS */
+	--border-color:        #222222;
+	--border-color-strong: #333333;
+	--border-color-subtle: #1a1a1b;
+
+	/* TEXT */
+	--text-primary:   #e8e8e8;
+	--text-secondary: #c1c1c1;
+	--text-tertiary:  #888888;
+	--text-disabled:  #555555;
+	--text-inverse:   #121113;
+	--text-link:      #e78a53;
+
+	/* PRIMARY — тёплый оранжевый акцент Darkmatter dark */
+	--primary-50:  #2a1a0e;
+	--primary-100: #3d2510;
+	--primary-200: #5c3618;
+	--primary-300: #8a5228;
+	--primary-400: #c47040;
+	--primary-500: #e78a53;
+	--primary-600: #f09860;
+	--primary-700: #f5a870;
+	--primary-800: #f9be90;
+	--primary-900: #fcd8b8;
+
+	/* GRAY — инвертированная шкала для тёмной темы */
+	--gray-25:  #0e0e0f;
+	--gray-50:  #111112;
+	--gray-100: #1a1a1b;
+	--gray-200: #222222;
+	--gray-300: #333333;
+	--gray-400: #555555;
+	--gray-500: #888888;
+	--gray-600: #aaaaaa;
+	--gray-700: #c1c1c1;
+	--gray-800: #d8d8d8;
+	--gray-900: #e8e8e8;
+	--gray-950: #f2f2f2;
+
+	/* SECONDARY — сине-зелёный */
+	--secondary-500: #5f8787;
+	--secondary-100: #1a2a2a;
+	--secondary-200: #2d4a4a;
+
+	/* STATUS COLORS */
+	--status-backlog-bg:      #1a1a1b;
+	--status-backlog-text:    #888888;
+	--status-backlog-border:  #333333;
+
+	--status-progress-bg:     #2a1a0e;
+	--status-progress-text:   #f0a060;
+	--status-progress-border: #5c3618;
+
+	--status-completed-bg:    #1a2a1a;
+	--status-completed-text:  #5f8787;
+	--status-completed-border:#2d4a2d;
+
+	--status-dropped-bg:      #1a1a1b;
+	--status-dropped-text:    #666666;
+	--status-dropped-border:  #2a2a2b;
+
+	--status-wishlist-bg:     #1a1a1b;
+	--status-wishlist-text:   #888888;
+	--status-wishlist-border: #222222;
+
+	/* CATEGORY COLORS */
+	--category-books-bg:      #5f8787;
+	--category-books-primary: #5f8787;
+	--category-books-light:   #1a2a2a;
+
+	--category-movies-bg:     #e78a53;
+	--category-movies-primary:#e78a53;
+	--category-movies-light:  #2a1a0e;
+
+	--category-games-bg:      #8b6fa0;
+	--category-games-primary: #8b6fa0;
+	--category-games-light:   #1e1828;
+
+	/* SEMANTIC */
+	--success-50:  #1a2a1a;
+	--success-500: #4ade80;
+	--success-600: #22c55e;
+
+	--error-50:  #2a1a1a;
+	--error-500: #f87171;
+	--error-600: #ef4444;
+
+	--warning-50:  #2a2010;
+	--warning-500: #fbbf24;
+	--warning-600: #f59e0b;
+
+	--info-50:  #1a1a2a;
+	--info-600: #60a5fa;
+
+	/*
+	  SHADOWS — в тёмной теме нужно усилить тени,
+	  иначе карточки сливаются с фоном.
+	  Увеличиваем opacity и добавляем тёмные значения.
+	*/
+	--shadow-xs:   0px 1px 4px 0px hsl(0 0% 0% / 0.25);
+	--shadow-sm:   0px 1px 4px 0px hsl(0 0% 0% / 0.30), 0px 1px 2px -1px hsl(0 0% 0% / 0.30);
+	--shadow-base: 0px 1px 4px 0px hsl(0 0% 0% / 0.40);
+	--shadow-md:   0px 1px 4px 0px hsl(0 0% 0% / 0.30), 0px 2px 4px -1px hsl(0 0% 0% / 0.30);
+	--shadow-lg:   0px 1px 4px 0px hsl(0 0% 0% / 0.30), 0px 4px 6px -1px hsl(0 0% 0% / 0.30);
+  }

@@ -115,8 +115,8 @@ const remainingCount = computed(() => Math.max(0, props.items.length - 3));
           v-for="(item, index) in visibleItems"
           :key="item.id"
 		  :title="getMediaTitle(item)"
-          class="card-padded w-80 lg:w-95 flex border-l-4 items-center gap-4 hover:shadow-(--shadow-md) transition-all duration-(--transition-base) bg-white"
-          :style="{
+      class="card-padded w-80 lg:w-95 flex border-l-4 items-center gap-4
+      hover:shadow-(--shadow-md) transition-all duration-(--transition-base)"          :style="{
             animationDelay: `${index * 50}ms`,
             ...getBorderStyle(item.media?.type || ''),
           }"
@@ -195,8 +195,7 @@ const remainingCount = computed(() => Math.max(0, props.items.length - 3));
   <!-- Пустое состояние - если нет элементов в процессе -->
   <div v-else class="card-padded mb-8 text-center py-12">
     <div
-      class="w-16 h-16 mx-auto mb-4 rounded-full bg-(--gray-100) flex items-center justify-center"
-    >
+    class="w-16 h-16 mx-auto mb-4 rounded-full bg-(--background-subtle) flex items-center justify-center"    >
       <BookOpen :size="24" class="text-(--gray-400)" />
     </div>
     <h4

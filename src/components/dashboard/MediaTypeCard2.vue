@@ -24,53 +24,33 @@ interface Emits {
 
 const props = defineProps<Props>();
 const emit = defineEmits<Emits>();
+
 const completionRate = computed(() => {
   if (props.stats.total === 0) return 0;
   return Math.round((props.stats.completed / props.stats.total) * 100);
 });
 
-const iconWrapperClass = computed(() => {
-  return `icon-wrapper-${props.variant}`;
-});
-const bgClass = computed(() => {
-  return `${props.variant}-card`;
-});
-
-const statItems = computed(() => [
-  {
-    label: "В процессе",
-    value: props.stats.inProgress,
-    color: "text-(--status-progress-text)",
-    bgColor: "bg-(--status-progress-bg)",
-    highlight: true,
-  },
-  {
-    label: "Завершено",
-    value: props.stats.completed,
-    color: "text-(--status-completed-text)",
-    bgColor: "bg-(--status-completed-bg)",
-  },
-  {
-    label: "Бэклог",
-    value: props.stats.backlog,
-    color: "text-(--status-backlog-text)",
-    bgColor: "bg-(--status-backlog-bg)",
-  },
-]);
+const accentColor = computed(() => `var(--category-${props.variant}-bg)`);
+const borderClass = computed(() => `${props.variant}-card`);
 </script>
 
 <template>
-  <div class="category-card" :class="bgClass">
-    <div class="flex items-center justify-between p-2 pb-6">
+  <div class="category-card" :class="borderClass">
+
+    <!-- ── Шапка ───────────────────────────────────────────────── -->
+    <div class="flex items-start justify-between mb-5">
       <div class="flex items-center gap-3">
-        <div :class="iconWrapperClass" class="p-3">
-          <component :is="icon" :size="24" />
+        <div
+          class="w-11 h-11 rounded-xl flex items-center justify-center shrink-0 shadow-(--shadow-xs)"
+          :style="{ backgroundColor: accentColor }"
+        >
+          <component :is="icon" :size="22" class="text-white" />
         </div>
         <div>
-          <h4 class="text-2xl font-semibold text-(--text-primary)">
+          <h4 class="text-lg font-semibold text-(--text-primary) leading-tight">
             {{ title }}
           </h4>
-          <p class="text-xs text-(--text-tertiary)">
+          <p class="text-xs text-(--text-tertiary) mt-0.5">
             {{ stats.total }} {{ stats.total === 1 ? "элемент" : "элементов" }}
           </p>
         </div>
@@ -78,75 +58,105 @@ const statItems = computed(() => [
 
       <button
         @click="emit('add')"
-        class="btn-add bg-(--primary-500) p-3 items-center gap-2"
-        title="Добавить"
+        class="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium cursor-pointer transition-all duration-(--transition-base) shrink-0"
+        :style="{
+          backgroundColor: `color-mix(in srgb, ${accentColor} 12%, transparent)`,
+          color: accentColor,
+          border: `1px solid color-mix(in srgb, ${accentColor} 25%, transparent)`,
+        }"
       >
+        <Plus :size="15" />
         Добавить
-        <Plus :size="16" />
       </button>
     </div>
 
-    <div class="grid grid-cols-2 gap-2 mb-4">
+    <!-- ── Статистика ──────────────────────────────────────────── -->
+    <!--
+      Асимметричная сетка: левая колонка — крупная метрика «В процессе»,
+      правая — две вторичные метрики (завершено + бэклог) стопкой.
+      row-span-2 на левой ячейке растягивает её на обе строки правой.
+    -->
+    <div class="grid grid-cols-2 gap-3 mb-5" v-if="stats.total > 0">
+
+      <!-- В процессе — главная метрика, занимает всю левую колонку -->
       <div
-        v-for="item in statItems"
-        :key="item.label"
-        :class="[
-          'p-3 rounded-lg transition-all',
-          item.highlight
-            ? ' row-span-2 content-end'
-            : '',
-        ]"
+        class="row-span-2 rounded-xl p-4 flex flex-col justify-center"
+
       >
         <div
-          :class="[
-            item.highlight
-              ? 'text-4xl font-extrabold '
-              : 'text-xl font-bold leading-none mb-1',
-            item.color,
-          ]"
+          class="text-5xl font-extrabold leading-none mb-2 tracking-tight"
+          :style="{ color: accentColor }"
         >
-          {{ item.value }}
+          {{ stats.inProgress }}
         </div>
-        <div class="text-xs) text-(--text-tertiary)">
-          {{ item.label }}
-        </div>
+        <div class="text-xs font-medium text-(--text-tertiary)">В процессе</div>
       </div>
-    </div>
-    <div class="">
-        <div class="flex items-center justify-between mb-1.5">
-          <span class="text-xs text-(--text-tertiary)"> Завершено </span>
-          <span class="text-xs font-semibold text-(--text-secondary)">
-            {{ completionRate }}%
-          </span>
+
+      <!-- Завершено — правая верхняя ячейка -->
+      <div
+        class="rounded-xl p-3"
+
+      >
+        <div class="text-2xl font-bold leading-none mb-1 text-(--status-completed-text)">
+          {{ stats.completed }}
         </div>
-        <div class="progress">
-          <div
-            class="progress-fill"
-            :style="{ width: `${completionRate}%`, backgroundColor: ` var(--category-${props.variant}-bg`}"
-          ></div>
+        <div class="text-xs text-(--text-tertiary)">Завершено</div>
+      </div>
+
+      <!-- Бэклог — правая нижняя ячейка -->
+      <div
+        class="rounded-xl p-3"
+
+      >
+        <div class="text-2xl font-bold leading-none mb-1 text-(--text-secondary)">
+          {{ stats.backlog }}
         </div>
+        <div class="text-xs text-(--text-tertiary)">Бэклог</div>
+      </div>
+
     </div>
 
-    <!-- Быстрая информация внизу -->
-    <div
-      v-if="stats.dropped > 0"
-      class="mt-4 pt-3 border-t border-(--border-color-subtle)"
-    >
-      <div class="flex items-center justify-between text-(--text-xs)">
-        <span class="text-(--text-tertiary)">Брошено</span>
-        <span class="font-medium text-(--status-dropped-text)">
-          {{ stats.dropped }}
+    <!-- ── Прогресс-бар ────────────────────────────────────────── -->
+    <div v-if="stats.total > 0">
+      <div class="flex items-center justify-between mb-1.5">
+        <span class="text-xs text-(--text-tertiary)">Завершено</span>
+        <span class="text-xs font-semibold text-(--text-secondary)">
+          {{ completionRate }}%
         </span>
       </div>
+      <div
+        class="w-full h-1.5 rounded-full overflow-hidden"
+        style="background-color: var(--border-color);"
+      >
+        <div
+          class="h-full rounded-full transition-all duration-500"
+          :style="{
+            width: `${completionRate}%`,
+            backgroundColor: accentColor,
+          }"
+        />
+      </div>
     </div>
 
-    <!-- Пустое состояние -->
-    <div v-if="stats.total === 0" class="py-8 text-center">
-      <component :is="icon" :size="32" class="mx-auto mb-3 text-(--gray-300)" />
-      <p class="text-sm text-(--text-tertiary) mb-3">Нет элементов</p>
-      <button @click="emit('add')" class="btn-secondary text-(--text-xs)">
+    <!-- Брошено — только если есть -->
+    <div
+      v-if="stats.dropped > 0"
+      class="flex items-center justify-between mt-3 pt-3 border-t border-(--border-color-subtle)"
+    >
+      <span class="text-xs text-(--text-tertiary)">Брошено</span>
+      <span class="text-xs font-medium text-(--status-dropped-text)">
+        {{ stats.dropped }}
+      </span>
+    </div>
+
+    <!-- ── Пустое состояние ────────────────────────────────────── -->
+    <div v-if="stats.total === 0" class="pt-2 text-center">
+      <component :is="icon" :size="28" class="mx-auto mb-3 text-(--text-disabled)" />
+      <p class="text-sm text-(--text-tertiary) mb-3">Список пуст</p>
+      <button @click="emit('add')" class="btn-secondary text-sm">
         Добавить первый
       </button>
     </div>
+
   </div>
 </template>

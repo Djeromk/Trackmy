@@ -4,632 +4,315 @@ import { Trophy, TrendingUp } from "lucide-vue-next";
 import * as echarts from "echarts";
 import type { EChartsOption } from "echarts";
 
+/**
+ * Статистика по одной категории медиа.
+ * completed — завершённые, total — всего в списке.
+ */
 interface CategoryStats {
   completed: number;
   total: number;
 }
 
 interface Props {
-  booksStats: CategoryStats; // Статистика по книгам
-  moviesStats: CategoryStats; // Статистика по фильмам
-  gamesStats: CategoryStats; // Статистика по играм
-  thisWeekCompleted?: number; // Завершено на этой неделе
+  booksStats: CategoryStats;
+  moviesStats: CategoryStats;
+  gamesStats: CategoryStats;
+  thisWeekCompleted?: number;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   thisWeekCompleted: 0,
 });
 
+/** Ссылка на DOM-элемент контейнера графика */
 const chartContainer = ref<HTMLElement | null>(null);
 
+/** Экземпляр ECharts — null пока график не инициализирован */
 let chartInstance: echarts.ECharts | null = null;
-const totalCompleted = computed(() => {
-  return (
-    props.booksStats.completed +
-    props.moviesStats.completed +
-    props.gamesStats.completed
-  );
-});
-const totalItems = computed(() => {
-  return (
-    props.booksStats.total + props.moviesStats.total + props.gamesStats.total
-  );
-});
 
+/** Суммарное количество завершённых по всем категориям */
+const totalCompleted = computed(() =>
+  props.booksStats.completed +
+  props.moviesStats.completed +
+  props.gamesStats.completed
+);
+
+/** Суммарное количество элементов по всем категориям */
+const totalItems = computed(() =>
+  props.booksStats.total +
+  props.moviesStats.total +
+  props.gamesStats.total
+);
+
+/**
+ * Процент завершения от общего количества.
+ * Округляем до целого — дробные проценты не нужны в KPI.
+ */
 const completionPercentage = computed(() => {
   if (totalItems.value === 0) return 0;
   return Math.round((totalCompleted.value / totalItems.value) * 100);
 });
 
-const chartData = computed(() => {
-  const data = [
-    {
-      value: props.booksStats.completed,
-      name: "Книги",
-      itemStyle: {
-        color: "#0ab7f1d1", // Primary-500
-      },
-    },
-    {
-      value: props.moviesStats.completed,
-      name: "Фильмы",
-      itemStyle: {
-        color: "#0a6ef1d4", // Primary-600
-      },
-    },
-    {
-      value: props.gamesStats.completed,
-      name: "Игры",
-      itemStyle: {
-        color: "#6e35dfd4", // Primary-700
-      },
-    },
-  ].filter((item) => item.value > 0); // Показываем только категории с завершенными элементами
+/**
+ * Цвета категорий синхронизированы с CSS-переменными темы.
+ * Используем getComputedStyle чтобы читать актуальные значения
+ * переменных после монтирования (нужно для смены тем в будущем).
+ */
+const CATEGORY_COLORS = {
+  books:  "#527575",   // --category-books-bg
+  movies: "#d87943",   // --category-movies-bg
+  games:  "#7c5cbf",   // --category-games-bg
+};
 
-  return data;
+/**
+ * Данные для диаграммы — фильтруем категории с нулём завершённых,
+ * чтобы не показывать пустые сегменты.
+ */
+const chartData = computed(() => [
+  {
+    value: props.booksStats.completed,
+    name: "Книги",
+    itemStyle: { color: CATEGORY_COLORS.books },
+  },
+  {
+    value: props.moviesStats.completed,
+    name: "Фильмы",
+    itemStyle: { color: CATEGORY_COLORS.movies },
+  },
+  {
+    value: props.gamesStats.completed,
+    name: "Игры",
+    itemStyle: { color: CATEGORY_COLORS.games },
+  },
+].filter((item) => item.value > 0));
+
+/**
+ * Опции ECharts для кольцевой диаграммы.
+ *
+ * Ключевые решения:
+ * - radius: ["62%", "88%"] — широкое кольцо, хорошо видна дуга
+ * - startAngle: 90 — начало сверху (12 часов), естественно для прогресса
+ * - borderRadius: 6 — скруглённые сегменты, современный вид
+ * - emphasis.scale: false — без скачка при hover, стабильнее
+ */
+const getChartOption = (): EChartsOption => ({
+  tooltip: {
+    trigger: "item",
+    formatter: "{b}: {c} ({d}%)",
+    backgroundColor: "var(--background-card)",
+    borderColor: "var(--border-color)",
+    borderWidth: 1,
+    textStyle: {
+      color: "var(--text-primary)",
+      fontSize: 12,
+    },
+    padding: [8, 12],
+  },
+  legend: {
+    show: false,
+  },
+  series: [
+    {
+      name: "Завершено",
+      type: "pie",
+      radius: ["62%", "88%"],
+      center: ["50%", "50%"],
+      data: chartData.value,
+      itemStyle: {
+        borderRadius: 3,
+        borderColor: "var(--background-card)",
+        borderWidth: 1,
+      },
+      startAngle: 90,
+      label: { show: false },
+      labelLine: { show: false },
+      emphasis: {
+        scale: false,
+        itemStyle: {
+          shadowBlur: 16,
+          shadowOffsetX: 0,
+          shadowColor: "rgba(0,0,0,0.18)",
+        },
+      },
+      animationType: "scale",
+      animationEasing: "elasticOut",
+      animationDelay: (idx: number) => idx * 80,
+    },
+  ],
 });
 
-const getChartOption = (): EChartsOption => {
-  return {
-    tooltip: {
-      trigger: "item",
-      formatter: "{b}: {c} ({d}%)",
-      backgroundColor: "rgba(255, 255, 255, 0.96)",
-      borderColor: "var(--border-color)",
-      borderWidth: 1,
-      textStyle: {
-        color: "var(--text-primary)",
-        fontSize: 12,
-      },
-      padding: [8, 12],
-    },
-
-    legend: {
-      bottom: 10,
-      left: "center",
-      itemWidth: 10,
-      itemHeight: 10,
-      itemGap: 16,
-      textStyle: {
-        fontSize: 11,
-        color: "var(--text-tertiary)",
-      },
-      icon: "circle",
-    },
-
-    series: [
-      {
-        name: "Завершено",
-        type: "pie",
-        radius: ["50%", "75%"],
-        center: ["50%", "42%"],
-        data: chartData.value,
-
-        itemStyle: {
-          borderRadius: 4,
-          borderColor: "#fff",
-          borderWidth: 1,
-        },
-        startAngle: 180,
-        endAngle: 360,
-
-        label: {
-          show: false,
-        },
-        labelLine: {
-          show: false,
-        },
-
-        emphasis: {
-          scale: false,
-          itemStyle: {
-            shadowBlur: 12,
-            shadowOffsetX: 0,
-            shadowColor: "rgba(0, 0, 0, 0.2)",
-          },
-        },
-
-        animationType: "scale",
-        animationEasing: "elasticOut",
-        animationDelay: function (idx: number) {
-          return idx * 80;
-        },
-      },
-    ],
-  };
-};
-
-const initChart = () => {
+function initChart() {
   if (!chartContainer.value) return;
-
   chartInstance = echarts.init(chartContainer.value);
   chartInstance.setOption(getChartOption());
-
   window.addEventListener("resize", handleResize);
-};
+}
 
-/**
- * Обновление графика при изменении данных
- */
-const updateChart = () => {
+function updateChart() {
   if (!chartInstance) return;
   chartInstance.setOption(getChartOption());
-};
+}
 
-/**
- * Обработчик resize
- */
-const handleResize = () => {
-  if (chartInstance) {
-    chartInstance.resize();
-  }
-};
+function handleResize() {
+  chartInstance?.resize();
+}
 
-/**
- * Очистка ресурсов
- */
-const cleanup = () => {
+function cleanup() {
   if (chartInstance) {
     window.removeEventListener("resize", handleResize);
     chartInstance.dispose();
     chartInstance = null;
   }
-};
+}
 
-// Lifecycle
-onMounted(() => {
-  initChart();
-});
+onMounted(() => { initChart(); });
 
 watch(
   () => [props.booksStats, props.moviesStats, props.gamesStats],
-  () => {
-    updateChart();
-  },
+  () => { updateChart(); },
   { deep: true }
 );
 
-onUnmounted(() => {
-  cleanup();
-});
+onUnmounted(() => { cleanup(); });
 </script>
 
 <template>
   <div class="card-padded border-l-4 border-l-(--primary-500)">
-    <!-- Заголовок -->
-    <div class="flex items-center gap-3">
+
+    <!-- ── Заголовок ───────────────────────────────────────────── -->
+    <div class="flex items-center justify-between mb-6">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-(--primary-500) flex items-center justify-center shadow-(--shadow-sm)">
+          <Trophy :size="20" class="text-white" />
+        </div>
+        <div>
+          <h3 class="text-base font-semibold text-(--text-primary) leading-tight">
+            Моя активность
+          </h3>
+          <p class="text-xs text-(--text-tertiary)">
+            {{ totalCompleted }} из {{ totalItems }} завершено
+          </p>
+        </div>
+      </div>
+
+      <!--
+        Чип «+N на этой неделе» — зелёный позитивный индикатор.
+        Показываем только если есть завершённые за неделю.
+        Намеренно компактный: не конкурирует с главным KPI.
+      -->
       <div
-        class="w-12 h-12 rounded-xl bg-(--primary-600) flex items-center justify-center shadow-(--shadow-sm)"
+        v-if="thisWeekCompleted > 0"
+        class="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold"
+        style="background-color: var(--status-completed-bg); color: var(--status-completed-text); border: 1px solid var(--status-completed-border);"
       >
-        <Trophy :size="24" class="text-white" />
-      </div>
-      <div>
-        <h3 class="text-xl font-semibold text-(--text-primary)">
-          Моя Активность
-        </h3>
+        <TrendingUp :size="12" />
+        +{{ thisWeekCompleted }} за неделю
       </div>
     </div>
 
-    <!-- Главная метрика - процент выполнения -->
-    <div
-      class="text-center items-start justify-between flex flex-row py-6 rounded-xl"
-    >
-      <div class="flex flex-col gap-2">
-        <div class="text-sm text-(--text-tertiary)">Ваш прогресс</div>
-        <div class="text-6xl font-extrabold text-(--primary-700) leading-none">
-          {{ completionPercentage }}%
-        </div>
-      </div>
-      <!-- <div class="text-xs text-(--text-tertiary)">
-        {{ totalCompleted }} из {{ totalItems }} элементов
-      </div> -->
-      <!-- Активность за неделю -->
-      <div v-if="thisWeekCompleted > 0" class="flex flex-col gap-2">
-        <div
-          class="flex flex-col items-center justify-between p-3 bg-green-50 rounded-lg outline-1 outline-green-200"
+    <!-- ── Главный KPI: процент ────────────────────────────────── -->
+    <!--
+      Процент — главный элемент карточки.
+      Крупная цифра + подпись + горизонтальный прогресс-бар.
+      Прогресс-бар показывает то же значение визуально.
+    -->
+    <div class="mb-6">
+      <div class="flex items-end gap-3 mb-3">
+        <span
+          class="text-7xl font-extrabold leading-none tracking-tight"
+          style="color: var(--primary-500);"
         >
-          <div class="flex items-center gap-2 text-sm">
-            <TrendingUp :size="16" />
-            <span class="font-medium">На этой неделе</span>
-          </div>
-          <div class="text-xl font-bold text-(--green-600)">
-            +{{ thisWeekCompleted }}
-          </div>
-        </div>
+          {{ completionPercentage }}%
+        </span>
+        <span class="text-sm text-(--text-tertiary) mb-2 leading-tight">
+          общий<br>прогресс
+        </span>
+      </div>
+
+      <!-- Прогресс-бар — широкий, с акцентным цветом -->
+      <div class="w-full h-2.5 rounded-full overflow-hidden" style="background-color: var(--border-color);">
+        <div
+          class="h-full rounded-full transition-all duration-700 ease-out"
+          style="background-color: var(--primary-500);"
+          :style="{ width: `${completionPercentage}%` }"
+        />
       </div>
     </div>
 
-    <!-- График распределения завершенных по категориям -->
+    <!-- ── Диаграмма + статистика по категориям ───────────────── -->
+    <div v-if="totalCompleted > 0" class="flex items-center gap-4">
 
-    <div class="flex flex-row justify-between">
-      <div v-if="totalCompleted > 0" class="w-fit">
-        <h4 class="text-sm font-semibold text-(--text-secondary)">
-          Распределение по категориям
-        </h4>
+      <!--
+        Кольцевая диаграмма ECharts.
+        Квадратный контейнер — диаграмма сама центрируется внутри.
+        h-32 w-32 — достаточно для читаемости кольца.
+      -->
+      <div ref="chartContainer" class="w-32 h-32 shrink-0" />
 
-        <!-- Контейнер для ECharts -->
-        <div ref="chartContainer" class="w-full h-35"></div>
-      </div>
+      <!-- Легенда: три строки, иконка-точка + название + счётчик -->
+      <div class="flex flex-col gap-2 flex-1 min-w-0">
 
-      <!-- Детальная статистика по категориям -->
-      <div class="flex flex-col gap-2">
         <!-- Книги -->
-        <div class="flex items-center justify-between p-3 gap-6">
-          <div class="flex items-center gap-3">
-            <div class="w-2 h-2 rounded-full bg-[#3b82f6]"></div>
-            <span class="text-lg text-(--text-secondary)">Книги</span>
+        <div class="flex items-center justify-between gap-2">
+          <div class="flex items-center gap-2 min-w-0">
+            <span
+              class="w-2.5 h-2.5 rounded-full shrink-0"
+              :style="{ backgroundColor: CATEGORY_COLORS.books }"
+            />
+            <span class="text-sm text-(--text-secondary) truncate">Книги</span>
           </div>
-          <div class="flex flex-row">
-            <span class="text-base">
-              <span class=" font-semibold text-(--text-primary)">
-                {{ booksStats.completed }}
-              </span>
-              из {{ booksStats.total }}
-            </span>
-          </div>
+          <span class="text-sm font-semibold text-(--text-primary) shrink-0">
+            {{ booksStats.completed }}
+            <span class="font-normal text-(--text-tertiary)">/ {{ booksStats.total }}</span>
+          </span>
         </div>
 
         <!-- Фильмы -->
-        <div class="flex items-center justify-between p-3 gap-6">
-          <div class="flex items-center gap-3">
-            <div class="w-2 h-2 rounded-full bg-[#2563eb]"></div>
-            <span class="text-lg text-(--text-secondary)">Фильмы</span>
+        <div class="flex items-center justify-between gap-2">
+          <div class="flex items-center gap-2 min-w-0">
+            <span
+              class="w-2.5 h-2.5 rounded-full shrink-0"
+              :style="{ backgroundColor: CATEGORY_COLORS.movies }"
+            />
+            <span class="text-sm text-(--text-secondary) truncate">Фильмы</span>
           </div>
-          <div class="flex flex-row">
-            <span class="text-base">
-              <span class="font-semibold">
-                {{ moviesStats.completed }}
-              </span>
-              из {{ moviesStats.total }}
-            </span>
-          </div>
+          <span class="text-sm font-semibold text-(--text-primary) shrink-0">
+            {{ moviesStats.completed }}
+            <span class="font-normal text-(--text-tertiary)">/ {{ moviesStats.total }}</span>
+          </span>
         </div>
 
         <!-- Игры -->
-        <div class="flex items-center justify-between p-3 gap-6">
-          <div class="flex items-center gap-3">
-            <div class="w-2 h-2 rounded-full bg-[#1d4ed8]"></div>
-            <span class="text-lg text-(--text-secondary)">Игры</span>
+        <div class="flex items-center justify-between gap-2">
+          <div class="flex items-center gap-2 min-w-0">
+            <span
+              class="w-2.5 h-2.5 rounded-full shrink-0"
+              :style="{ backgroundColor: CATEGORY_COLORS.games }"
+            />
+            <span class="text-sm text-(--text-secondary) truncate">Игры</span>
           </div>
-          <div class="flex flex-row">
-            <span class="text-base">
-              <span class="font-semibold">
-                {{ gamesStats.completed }}
-              </span>
-              из {{ gamesStats.total }}
-            </span>
-          </div>
+          <span class="text-sm font-semibold text-(--text-primary) shrink-0">
+            {{ gamesStats.completed }}
+            <span class="font-normal text-(--text-tertiary)">/ {{ gamesStats.total }}</span>
+          </span>
         </div>
+
       </div>
     </div>
 
-    <!-- Пустое состояние -->
-    <div v-if="totalCompleted === 0" class="text-center py-8">
-      <div
-        class="w-16 h-16 mx-auto rounded-full bg-(--gray-100) flex items-center justify-center"
-      >
-        <Trophy :size="24" class="text-(--gray-400)" />
+    <!-- ── Пустое состояние ────────────────────────────────────── -->
+    <div v-if="totalCompleted === 0" class="text-center py-6">
+      <div class="w-14 h-14 mx-auto rounded-full bg-(--background-subtle) flex items-center justify-center mb-3">
+        <Trophy :size="22" class="text-(--text-disabled)" />
       </div>
       <p class="text-sm text-(--text-tertiary)">
-        Пока нет завершенных элементов
+        Пока нет завершённых элементов
       </p>
     </div>
+
   </div>
 </template>
 
 <style scoped>
-canvas {
-  outline: none;
-}
+canvas { outline: none; }
 </style>
-<!-- <script setup lang="ts">
-import { ref, computed, onMounted, watch } from "vue";
-import { Activity, TrendingUp, Target } from "lucide-vue-next";
-import * as echarts from "echarts";
-import type { EChartsOption } from "echarts";
-
-interface Props {
-  totalItems: number;
-
-  completedItems: number;
-
-  inProgressItems: number;
-
-  backlogItems: number;
-
-  droppedItems?: number;
-
-  thisWeekCompleted?: number;
-
-}
-
-const props = withDefaults(defineProps<Props>(), {
-  droppedItems: 0,
-  thisWeekCompleted: 0,
-});
-
-const chartContainer = ref<HTMLElement | null>(null);
-
-let chartInstance: echarts.ECharts | null = null;
-
-const completionPercentage = computed(() => {
-  if (props.totalItems === 0) return 0;
-  return Math.round((props.completedItems / props.totalItems) * 100);
-});
-
-const motivationMessage = computed(() => {
-  const percentage = completionPercentage.value;
-
-  if (percentage === 0) {
-    return "Начните свой путь!";
-  } else if (percentage < 25) {
-    return "Отличное начало!";
-  } else if (percentage < 50) {
-    return "Продолжайте в том же духе!";
-  } else if (percentage < 75) {
-    return "Вы на полпути!";
-  } else if (percentage < 100) {
-    return "Почти у цели!";
-  } else {
-    return "Все задачи выполнены! 🎉";
-  }
-});
-
-const chartData = computed(() => {
-  return [
-    {
-      value: props.completedItems,
-      name: "Завершено",
-      itemStyle: {
-        color: "#22c55e",
-
-      },
-    },
-    {
-      value: props.inProgressItems,
-      name: "В процессе",
-      itemStyle: {
-        color: "#3b82f6",
-
-      },
-    },
-    {
-      value: props.backlogItems,
-      name: "Бэклог",
-      itemStyle: {
-        color: "#f59e0b",
-
-      },
-    },
-    {
-      value: props.droppedItems,
-      name: "Брошено",
-      itemStyle: {
-        color: "#ef4444",
-
-      },
-    },
-  ].filter((item) => item.value > 0);
-
-});
-
-const getChartOption = (): EChartsOption => {
-  return {
-
-    tooltip: {
-      trigger: "item",
-      formatter: "{b}: {c} ({d}%)",
-
-      backgroundColor: "rgba(255, 255, 255, 0.95)",
-      borderColor: "#e5e7eb",
-      borderWidth: 1,
-      textStyle: {
-        color: "#1f2937",
-        fontSize: 12,
-      },
-      padding: [8, 12],
-    },
-
-    legend: {
-		orient: "vertical",
-      bottom: 200,
-      left: "right",
-      itemWidth: 12,
-      itemHeight: 12,
-      itemGap: 16,
-      textStyle: {
-        fontSize: 11,
-        color: "#6b7280",
-      },
-
-      icon: "circle",
-    },
-
-    series: [
-      {
-        name: "Статистика",
-        type: "pie",
-		height: 300,
-
-        radius: ["50%", "75%"],
-
-        center: ["25%", "45%"],
-
-        data: chartData.value,
-
-        itemStyle: {
-
-          borderRadius: 5,
-
-          borderColor: "#fff",
-          borderWidth: 1,
-        },
-        startAngle: 180,
-        endAngle: 360,
-
-        label: {
-          show: false,
-        },
-        labelLine: {
-          show: false,
-        },
-
-        emphasis: {
-
-          scale: false,
-
-        },
-
-        animationType: "scale",
-		animationEasing: 'backIn',
-
-        animationDelay: function (idx: number) {
-
-          return idx * 100;
-        },
-      },
-    ],
-  };
-};
-
-const initChart = () => {
-  if (!chartContainer.value) return;
-
-  chartInstance = echarts.init(chartContainer.value);
-
-  chartInstance.setOption(getChartOption());
-
-  window.addEventListener("resize", handleResize);
-};
-
-const updateChart = () => {
-  if (!chartInstance) return;
-
-  chartInstance.setOption(getChartOption());
-};
-
-const handleResize = () => {
-  if (chartInstance) {
-    chartInstance.resize();
-  }
-};
-
-const cleanup = () => {
-  if (chartInstance) {
-    window.removeEventListener("resize", handleResize);
-    chartInstance.dispose();
-    chartInstance = null;
-  }
-};
-
-onMounted(() => {
-
-  initChart();
-});
-
-watch(
-  () => [
-    props.completedItems,
-    props.inProgressItems,
-    props.backlogItems,
-    props.droppedItems,
-  ],
-  () => {
-    updateChart();
-  }
-);
-
-import { onUnmounted } from "vue";
-onUnmounted(() => {
-  cleanup();
-});
-</script>
-
-<template>
-
-  <div class="category-card border-l-4 border-l-(--primary-500)">
-
-    <div class="flex items-center justify-between mb-4">
-
-      <div class="flex items-center gap-3">
-        <div
-          class="icon-wrapper bg-gradient-to-br from-(--primary-400) to-(--primary-600) text-white"
-        >
-          <Activity :size="24" />
-        </div>
-        <div>
-          <h3 class="text-lg font-semibold">Активность</h3>
-          <p class="text-xs text-(--text-tertiary)">Общая статистика</p>
-        </div>
-      </div>
-    </div>
-
-
-
-
-    <div class="mb-4">
-
-      <div class="flex items-center justify-between mb-2">
-        <span
-          class="text-sm text-(--text-secondary) flex items-center gap-1"
-        >
-          <Target :size="14" />
-          Распределение по статусам
-        </span>
-        <span class="text-4xl font-semibold text-(--text-primary)">
-          {{ completionPercentage }}%
-        </span>
-      </div>
-
-      <div ref="chartContainer" class="w-full h-64 relative"></div>
-
-
-      <p class="text-xs text-(--text-tertiary) mt-2 italic text-center">
-        {{ motivationMessage }}
-      </p>
-    </div>
-
-    <div
-      v-if="thisWeekCompleted > 0"
-      class="mt-4 pt-4 border-t border-(--gray-200)"
-    >
-      <div class="flex items-center justify-between">
-        <div
-          class="flex items-center gap-2 text-sm text-(--text-secondary)"
-        >
-          <TrendingUp :size="16" class="text-(--success-500)" />
-          <span>На этой неделе</span>
-        </div>
-        <div class="flex items-center gap-1">
-          <span class="text-lg font-bold text-(--success-600)">
-            +{{ thisWeekCompleted }}
-          </span>
-          <span class="text-xs text-(--text-tertiary)"> завершено </span>
-        </div>
-      </div>
-    </div>
-
-
-    <div
-      v-if="totalItems === 0"
-      class="mt-4 p-3 rounded-lg bg-(--gray-50) text-center"
-    >
-      <p class="text-sm text-(--text-secondary)">
-        Добавьте первый элемент, чтобы начать отслеживание
-      </p>
-    </div>
-  </div>
-</template>
-
-<style scoped>
-
-.category-card:hover .icon-wrapper {
-  transform: scale(1.1);
-  transition: transform var(--transition-base);
-}
-
-canvas {
-  outline: none;
-}
-</style>
- -->

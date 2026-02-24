@@ -122,7 +122,7 @@ function confirmDelete() {
         <div class="relative">
           <button
             @click="toggleStatusDropdown"
-            class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-(--border-color) bg-white text-xs font-medium text-(--text-secondary) hover:border-(--primary-300) hover:text-(--primary-600) hover:bg-(--primary-50) transition-all duration-150 cursor-pointer"
+            class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-(--border-color) bg-(--primary-400) text-xs font-medium hover:border-(--primary-300) hover:text-(--primary-foreground) hover:bg-(--primary-600) transition-all duration-150 cursor-pointer"
           >
             <span class="hidden sm:inline">Статус</span>
             <ChevronDown
@@ -138,7 +138,7 @@ function confirmDelete() {
           <Transition name="dropdown">
             <div
               v-if="isStatusDropdownOpen"
-              class="absolute right-0 top-full mt-1.5 w-44 bg-white rounded-xl border border-(--border-color) shadow-(--shadow-lg) overflow-hidden z-20"
+              class="absolute right-0 top-full mt-1.5 w-44 bg-(--background) rounded-xl border border-(--border-color) shadow-(--shadow-lg) overflow-hidden z-20"
               @click.stop
             >
               <button

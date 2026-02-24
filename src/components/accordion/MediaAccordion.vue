@@ -87,7 +87,7 @@ function visibleCountInGroup(items: UserMedia[]): number {
 </script>
 
 <template>
-  <div class="w-full space-y-6">
+  <div class="w-full space-y-6" id="my-lists">
 
     <!-- Шапка с заголовком и счётчиком -->
     <div class="flex items-end justify-between">
@@ -108,7 +108,7 @@ function visibleCountInGroup(items: UserMedia[]): number {
         class="relative flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 cursor-pointer"
         :class="
           selectedFilter === filter.value
-            ? 'bg-white text-(--text-primary) shadow-(--shadow-sm)'
+            ? 'bg-(--primary-400) text-(--text-primary) shadow-(--shadow-sm)'
             : 'text-(--text-tertiary) hover:text-(--text-secondary)'
         "
       >
