@@ -26,6 +26,13 @@ export class GamesService {
 
   async getGameDetails(id: string): Promise<GameById> {
     const response = await fetch(`${BASE_URL}/games/${id}?key=${API_KEY}`)
+    if (response.status === 404 || response.status === 400) {
+      throw new Error('NOT_FOUND')
+    }
+
+    if (!response.ok) {
+      throw new Error(`API error: ${response.status}`)
+    }
     const game = await response.json()
 
     return game

@@ -28,6 +28,13 @@ export class BooksService {
 
   async getBookById(id: string): Promise<ExternalBook> {
     const response = await fetch(`${BASE_URL}/volumes/${id}?key=${API_KEY}`);
+    if (response.status === 404 || response.status === 400) {
+      throw new Error('NOT_FOUND')
+    }
+
+    if (!response.ok) {
+      throw new Error(`API error: ${response.status}`)
+    }
     const item = await response.json();
 
     return {

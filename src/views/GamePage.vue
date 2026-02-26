@@ -7,6 +7,7 @@ import { useMediaStore } from "@/stores/media";
 import MediaStatusDropdown from "@/components/media/MediaStatusDropdown.vue";
 import MediaRating from "@/components/media/MediaRating.vue";
 import MediaPoster from "@/components/media/MediaPoster.vue";
+import { useNotFound } from "@/composables/useNotFound";
 import {
   ArrowLeft,
   Calendar,
@@ -32,6 +33,7 @@ const gameId: string = route.params.id as string;
 const game = ref<GameById | null>(null);
 const loading = ref<boolean>(true);
 const error = ref<string | null>(null);
+  const { redirectToNotFound } = useNotFound()
 
 const userMediaEntry = computed(() =>
   findUserMediaEntry(mediaStore.userMedia, gameId)
@@ -102,8 +104,11 @@ onMounted(async () => {
   try {
     game.value = await gamesService.getGameDetails(gameId);
   } catch (e) {
-    const err = e as Error;
-    error.value = err.message || "Не удалось загрузить игру";
+    if (e instanceof Error && e.message === 'NOT_FOUND') {
+      redirectToNotFound()
+      return
+    }
+    error.value = "Не удалось загрузить игру";
   } finally {
     loading.value = false;
   }
@@ -452,180 +457,3 @@ async function handleUpdateStatus(status: MediaStatus) {
   margin-bottom: 0.5em;
 }
 </style>
-<!-- <script setup lang="ts">
-import { ref, computed, onMounted } from "vue";
-import { useRoute, useRouter } from "vue-router";
-import type { GameById, MediaStatus } from "@/types";
-import { gamesService } from "@/services/api/games";
-import { useMediaStore } from "@/stores/media";
-import MediaStatusDropdown from "@/components/media/MediaStatusDropdown.vue";
-import MediaRating from "@/components/media/MediaRating.vue";
-import MediaPoster from "@/components/media/MediaPoster.vue";
-import MovieRatings from "@/components/media/MovieRatings.vue";
-import {
-  ArrowLeft,
-  Calendar,
-  Loader,
-  ExternalLink,
-  MessageCircle,
-} from "lucide-vue-next";
-import {
-  findUserMediaEntry,
-  transformGameToExternalGame,
-  createStatusUpdatePayload,
-} from "@/utils/utils";
-
-const route = useRoute();
-const router = useRouter();
-const mediaStore = useMediaStore();
-const gameId: string = route.params.id as string;
-const game = ref<GameById | null>(null);
-const loading = ref<boolean>(true);
-const error = ref<string | null>(null);
-
-const userMediaEntry = computed(() =>
-  findUserMediaEntry(mediaStore.userMedia, gameId)
-);
-
-const currentStatus = computed(() => userMediaEntry.value?.status ?? null);
-
-onMounted(async () => {
-  if (!gameId) {
-    error.value = "ID игры не указан";
-    loading.value = false;
-    return;
-  }
-  try {
-    game.value = await gamesService.getGameDetails(gameId);
-  } catch (e) {
-    const err = e as Error;
-    error.value = err.message || "Не удалось загрузить фильм";
-  } finally {
-    loading.value = false;
-  }
-});
-
-async function handleAddGame(status: MediaStatus) {
-  if (!game.value) return;
-  const mediaItem = transformGameToExternalGame(game.value);
-  console.log("mediaItem in GamePage", mediaItem);
-  await mediaStore.addMediaFromExternal(mediaItem, "game", status);
-}
-
-async function handleUpdateStatus(status: MediaStatus) {
-  if (!userMediaEntry.value || status === currentStatus.value) return;
-  const updates = createStatusUpdatePayload(status);
-  console.log("updates", updates);
-  await mediaStore.updateMedia(userMediaEntry.value.id, updates);
-}
-
-console.log("game", game);
-</script>
-
-<template>
-  <div class="min-h-screen bg-(--neo-background-body) p-6">
-    <div class="max-w-4xl mx-auto">
-      <button
-        @click="router.back()"
-        class="flex items-center gap-2 text-gray-500 hover:text-gray-800 mb-8 cursor-pointer transition-colors"
-      >
-        <ArrowLeft :size="20" />
-        <span class="text-base">Назад</span>
-      </button>
-
-      <div v-if="loading" class="flex justify-center py-24">
-        <Loader :size="48" class="text-primary-500 animate-spin" />
-      </div>
-
-      <div v-else-if="error" class="text-center py-24">
-        <p class="text-red-500 text-lg">{{ error }}</p>
-        <button
-          @click="router.back()"
-          class="mt-4 text-primary-600 hover:underline cursor-pointer"
-        >
-          Вернуться назад
-        </button>
-      </div>
-
-      <div v-else-if="game" class="flex flex-col lg:flex-row gap-8">
-        <div class="w-full lg:w-72 shrink-0 flex flex-col items-center gap-6">
-          <MediaPoster
-            :src="game.background_image"
-            alt="{{"
-            game.name
-            }}
-            fallback-icon="film"
-          />
-          <MediaStatusDropdown
-            :user-media-entry="userMediaEntry"
-            :current-status="currentStatus"
-            media-type="game"
-            @add="handleAddGame"
-            @update="handleUpdateStatus"
-          />
-          <MediaRating
-            v-if="userMediaEntry"
-            :user-media-entry="userMediaEntry"
-          />
-        </div>
-
-        <div class="flex-1 flex flex-col gap-4">
-          <h1 class="text-4xl font-bold text-gray-800 leading-tight">
-            {{ game.name }}
-          </h1>
-          <p v-if="game.name_original" class="text-lg text-gray-500">
-            {{ game.name_original }}
-          </p>
-
-          <div class="flex flex-wrap gap-x-6 gap-y-2">
-            <div
-              v-if="game.released"
-              class="flex items-center gap-2 text-gray-600"
-            >
-              <Calendar :size="18" class="text-primary-500" />
-              <span class="text-base">{{ game.released }}</span>
-            </div>
-          </div>
-
-          <MovieRatings
-            :rating-kinopoisk="game.rating"
-            :rating-imdb="game.rating_top"
-          />
-
-          <div v-if="game.description" class="card-padded outline-none p-6">
-            <h2 class="text-lg font-semibold text-gray-800 mb-3">Описание</h2>
-            <p
-              class="text-base text-gray-600 leading-relaxed whitespace-pre-line"
-              v-html="game.description"
-            />
-
-            <div v-if="game.website" class="pt-4">
-              <h2 class="text-lg font-semibold text-gray-800 mb-3">
-                Дополнительно
-              </h2>
-              <div class="flex flex-col gap-3 text-base text-gray-600">
-                <a
-                  v-if="game.website"
-                  :href="game.website"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="inline-flex items-center gap-2 text-primary-600 hover:underline"
-                >
-                  <ExternalLink :size="18" />
-                  Открыть сайт игры
-                </a>
-                <p
-                  v-if="game.reviews_text_count"
-                  class="flex items-center gap-2"
-                >
-                  <MessageCircle :size="18" class="text-primary-500" />
-                  <span>Отзывов: {{ game.reviews_text_count }}</span>
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</template> -->

@@ -10,6 +10,7 @@ import MediaRating from "@/components/media/MediaRating.vue";
 import MediaPoster from "@/components/media/MediaPoster.vue";
 import MovieRatings from "@/components/media/MovieRatings.vue";
 import SeriesProgress from "@/components/series/SeriesProgress.vue";
+import { useNotFound } from "@/composables/useNotFound";
 import {
   ArrowLeft,
   Calendar,
@@ -40,6 +41,7 @@ const movieId: string = route.params.id as string;
 const movie = ref<KinopoiskItemByID | null>(null);
 const loading = ref<boolean>(true);
 const error = ref<string | null>(null);
+  const { redirectToNotFound } = useNotFound()
 
 const userMediaEntry = computed(() =>
   findUserMediaEntry(mediaStore.userMedia, movieId)
@@ -64,12 +66,15 @@ onMounted(async () => {
     return;
   }
   try {
-    movie.value = await kinopoiskService.searchMovieByID(movieId);
+    movie.value =  (await kinopoiskService.searchMovieByID(movieId));
   } catch (e) {
-    const err = e as Error;
-    error.value = err.message || "Не удалось загрузить фильм";
+    if (e instanceof Error && e.message === 'NOT_FOUND') {
+      redirectToNotFound()
+      return
+    }
+    error.value = 'Не удалось загрузить фильм'
   } finally {
-    loading.value = false;
+    loading.value = false
   }
 });
 

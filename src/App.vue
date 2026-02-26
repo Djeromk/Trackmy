@@ -2,6 +2,7 @@
 import AppHeader from '@/components/layout/AppHeader.vue'
 import Footer from './components/layout/Footer.vue';
 import AppWrapper from '@/AppWrapper.vue'
+import ErrorBoundary from './components/error/ErrorBoundary.vue';
 
 </script>
 
@@ -9,6 +10,7 @@ import AppWrapper from '@/AppWrapper.vue'
   <div id="trackmy-app" class="min-h-screen">
     <AppHeader />
     <main>
+      <ErrorBoundary>
       <Suspense>
         <template #default>
           <AppWrapper />
@@ -19,6 +21,7 @@ import AppWrapper from '@/AppWrapper.vue'
           </div>
         </template>
       </Suspense>
+      </ErrorBoundary>
     </main>
     <Footer />
   </div>

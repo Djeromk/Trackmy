@@ -458,12 +458,6 @@ async function handleLogout() {
         </div>
       </div>
 
-      <!-- ── Выход из аккаунта ───────────────────────────────── -->
-      <!--
-        Перенесено из AppHeader.
-        Выход — действие управления аккаунтом, а не навигации,
-        поэтому логично размещать его здесь, в настройках профиля.
-      -->
       <div class="card-padded">
         <div class="flex items-center justify-between">
           <div>

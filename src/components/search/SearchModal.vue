@@ -298,10 +298,6 @@ async function handleSelectWithStatus(
   handleClose();
 }
 
-/**
- * Директива v-focus: фокусирует элемент при монтировании в DOM.
- * Нужна для поля поиска — пользователь может сразу начать вводить текст.
- */
 const vFocus = {
   mounted: (el: HTMLElement) => {
     el.focus();

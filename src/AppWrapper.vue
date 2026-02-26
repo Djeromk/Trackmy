@@ -8,7 +8,7 @@ const mediaStore = useMediaStore()
 
 onMounted(async () => {
   await authStore.initialize()
-  await mediaStore.fetchUserMedia()
+  //await mediaStore.fetchUserMedia()
 })
 
 if (authStore.user) {

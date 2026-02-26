@@ -80,3 +80,12 @@ export interface ExternalMovie {
   thumbnail: string;
   isSeries: boolean;
 }
+
+export interface IAllKinopoiskResponse {
+  data: ExternalMovie[] | null
+  error: string | null
+}
+export interface IKinopoiskResponseById {
+  data: KinopoiskItemByID | null
+  error: string | null
+}
