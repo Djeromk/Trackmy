@@ -109,7 +109,7 @@ function visibleCountInGroup(items: UserMedia[]): number {
 
     <!-- Таб-переключатель фильтра по типу медиа -->
     <div
-      class="flex items-center gap-1 p-1 rounded-xl bg-(--gray-100) w-fit overflow-x-auto scrollbar-hide-true"
+      class="flex items-center gap-1 p-1 rounded-xl bg-(--gray-100) md:w-fit overflow-x-auto scrollbar-hide-true"
     >
       <button
         v-for="filter in filters"
