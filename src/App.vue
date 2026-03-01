@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import AppHeader from '@/components/layout/AppHeader.vue'
-import Footer from './components/layout/Footer.vue';
+import AppHeader from "@/components/layout/AppHeader.vue";
+import Footer from "./components/layout/Footer.vue";
 import AppWrapper from '@/AppWrapper.vue'
-import ErrorBoundary from './components/error/ErrorBoundary.vue';
-
+import ErrorBoundary from "./components/error/ErrorBoundary.vue";
+import SkeletonLoader from "./components/skeleton/SkeletonLoader.vue";
 </script>
 
 <template>
@@ -11,16 +11,14 @@ import ErrorBoundary from './components/error/ErrorBoundary.vue';
     <AppHeader />
     <main>
       <ErrorBoundary>
-      <Suspense>
-        <template #default>
-          <AppWrapper />
-        </template>
-        <template #fallback>
-          <div class="flex justify-center items-center h-screen">
-            Загрузка...
-          </div>
-        </template>
-      </Suspense>
+        <Suspense>
+          <template #default>
+            <AppWrapper />
+          </template>
+          <template #fallback>
+            <SkeletonLoader />
+          </template>
+        </Suspense>
       </ErrorBoundary>
     </main>
     <Footer />

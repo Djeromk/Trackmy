@@ -9,6 +9,7 @@ import { useAuthStore } from "@/stores/auth";
 import SearchModal from "@/components/search/SearchModal.vue";
 import Banner from "@/components/dashboard/Banner.vue";
 import MediaAccordion from "@/components/accordion/MediaAccordion.vue";
+import SkeletonLoader from "@/components/skeleton/SkeletonLoader.vue";
 import type {
   MediaType,
   MediaStatus,
@@ -26,11 +27,14 @@ const selectedMediaType = ref<MediaType>("other");
 const notification = ref<{ message: string; type: "success" | "error" } | null>(
   null,
 );
+let loading = ref(true)
+
 
 onMounted(() => {
-  if (authStore.user) {
-    mediaStore.fetchUserMedia();
-  }
+  loading.value = false
+  // if (authStore.user) {
+  //   mediaStore.fetchUserMedia();
+  // }
 });
 
 const inProgressItems = computed(() =>
@@ -171,7 +175,8 @@ function handleViewAllInProgress() {}
 
 <template>
   <div class="min-h-screen bg-(--background-body)">
-    <div class="container-xl px-6 py-8">
+    <SkeletonLoader v-if="loading" />
+    <div v-else class="container-xl px-6 py-8">
       <!-- Уведомление -->
       <Transition name="slide-down">
         <div
@@ -223,7 +228,7 @@ function handleViewAllInProgress() {}
         />
 
         <MediaTypeCard
-        v-if="authStore.user"
+          v-if="authStore.user"
           title="Книги"
           :icon="BookOpen"
           :stats="stats.books"
@@ -231,7 +236,7 @@ function handleViewAllInProgress() {}
           @add="() => openSearchModal('book')"
         />
         <MediaTypeCard
-        v-if="authStore.user"
+          v-if="authStore.user"
           title="Фильмы и Сериалы"
           :icon="Film"
           :stats="stats.movies"
@@ -239,7 +244,7 @@ function handleViewAllInProgress() {}
           @add="() => openSearchModal('movie')"
         />
         <MediaTypeCard
-        v-if="authStore.user"
+          v-if="authStore.user"
           title="Игры"
           :icon="Gamepad2"
           :stats="stats.games"

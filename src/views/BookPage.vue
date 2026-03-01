@@ -28,40 +28,15 @@ import fallbackImage from "@/assets/fallback.svg";
 const route = useRoute();
 const router = useRouter();
 const mediaStore = useMediaStore();
-
-/**
- * ID книги из параметров маршрута.
- * Используется для запроса данных из API и поиска
- * соответствующей записи в списке пользователя.
- */
 const bookId: string = route.params.id as string;
-
-/** Данные о книге, полученные из Google Books API */
 const book = ref<ExternalBook | null>(null);
-
-/** Флаг загрузки — показываем спиннер пока данные не пришли */
 const loading = ref<boolean>(true);
-
-/** Текст ошибки, если запрос завершился неудачей */
 const error = ref<string | null>(null);
-
-/** Открыт ли дропдаун выбора статуса */
 const statusDropdownOpen = ref<boolean>(false);
-
-/**
- * Текущая страница книги, отслеживаемая пользователем.
- * Синхронизируется с БД с debounce через watch.
- */
 const currentPage = ref<number | null | undefined>(0);
 
-/** Таймер для debounce обновления страницы */
 let currentPageTimeout: ReturnType<typeof setTimeout> | null = null;
 
-/**
- * Находит запись userMedia для текущей книги.
- * Сравниваем external_id медиа-элемента с ID из URL.
- * Возвращает null если книга не добавлена в список.
- */
 const userMediaEntry = computed<UserMedia | null>(() => {
   return (
     mediaStore.userMedia.find((entry) => entry.media?.external_id === bookId) ??
@@ -69,30 +44,18 @@ const userMediaEntry = computed<UserMedia | null>(() => {
   );
 });
 
-/**
- * Текущий статус книги в списке пользователя.
- * null означает что книга ещё не добавлена.
- */
 const currentStatus = computed<MediaStatus | null>(() => {
   return userMediaEntry.value?.status ?? null;
 });
 
-/**
- * Все доступные статусы с их читаемыми метками.
- * Преобразуем объект BOOKS_STATUS_LABELS в массив для v-for.
- */
 const availableStatuses = computed<{ value: MediaStatus; label: string }[]>(
   () => {
     return (Object.entries(BOOKS_STATUS_LABELS) as [MediaStatus, string][]).map(
-      ([value, label]) => ({ value, label })
+      ([value, label]) => ({ value, label }),
     );
-  }
+  },
 );
 
-/**
- * Год публикации книги — извлекаем только первые 4 символа из publishedDate,
- * так как Google Books возвращает дату в формате "YYYY-MM-DD" или просто "YYYY".
- */
 const publicationYear = computed<string | null>(() => {
   if (!book.value?.publishedDate) return null;
   return book.value.publishedDate.substring(0, 4);
@@ -116,20 +79,12 @@ onMounted(async () => {
   }
 });
 
-/**
- * Добавляет книгу в список пользователя с выбранным статусом.
- * Вызывается когда книга ещё не добавлена (userMediaEntry === null).
- */
 async function handleAddBook(status: MediaStatus) {
   if (!book.value) return;
   await mediaStore.addMediaFromExternal(book.value, "book", status);
   statusDropdownOpen.value = false;
 }
 
-/**
- * Обновляет статус уже добавленной книги.
- * Пропускаем обновление если статус не изменился.
- */
 async function handleUpdateStatus(status: MediaStatus) {
   if (!userMediaEntry.value) return;
   if (status === currentStatus.value) {
@@ -145,19 +100,11 @@ async function handleUpdateStatus(status: MediaStatus) {
   statusDropdownOpen.value = false;
 }
 
-/**
- * Заменяет сломанное изображение на fallback.
- * Обработчик события error на теге img.
- */
 function handleImageError(event: Event) {
   const target = event.target as HTMLImageElement;
   target.src = fallbackImage;
 }
 
-/**
- * Следим за изменением currentPage с debounce 1 секунда.
- * Это предотвращает лишние запросы к API при быстром движении слайдера.
- */
 watch(currentPage, (value) => {
   if (currentPageTimeout) clearTimeout(currentPageTimeout);
   currentPageTimeout = setTimeout(() => {
@@ -166,10 +113,6 @@ watch(currentPage, (value) => {
   }, 1000);
 });
 
-/**
- * Сохраняет текущую страницу в БД через store.
- * Вызывается только если пользователь добавил книгу в список.
- */
 async function handleCurrentPageChange(value: number) {
   if (!userMediaEntry.value) return;
   await mediaStore.updateMedia(userMediaEntry.value.id, {
@@ -181,7 +124,6 @@ async function handleCurrentPageChange(value: number) {
 
 <template>
   <div class="min-h-screen bg-(--background-body)">
-    <!-- Верхняя панель навигации с кнопкой "Назад" -->
     <div class="border-b border-(--border-color) bg-(--background-card)">
       <div class="max-w-5xl mx-auto px-6 py-4">
         <button
@@ -195,16 +137,23 @@ async function handleCurrentPageChange(value: number) {
     </div>
 
     <div class="max-w-5xl mx-auto px-6 py-10">
-
       <!-- Состояние загрузки — полноэкранный спиннер -->
-      <div v-if="loading" class="flex flex-col items-center justify-center py-32 gap-4">
+      <div
+        v-if="loading"
+        class="flex flex-col items-center justify-center py-32 gap-4"
+      >
         <Loader :size="40" class="text-(--primary-500) animate-spin" />
         <p class="text-sm text-(--text-tertiary)">Загрузка книги...</p>
       </div>
 
       <!-- Состояние ошибки с возможностью вернуться назад -->
-      <div v-else-if="error" class="flex flex-col items-center justify-center py-32 gap-4">
-        <div class="w-16 h-16 rounded-full bg-(--gray-100) flex items-center justify-center">
+      <div
+        v-else-if="error"
+        class="flex flex-col items-center justify-center py-32 gap-4"
+      >
+        <div
+          class="w-16 h-16 rounded-full bg-(--gray-100) flex items-center justify-center"
+        >
           <BookOpen :size="28" class="text-(--gray-400)" />
         </div>
         <p class="text-base font-medium text-(--text-primary)">{{ error }}</p>
@@ -215,16 +164,14 @@ async function handleCurrentPageChange(value: number) {
 
       <!-- Основной контент страницы книги -->
       <div v-else-if="book" class="flex flex-col lg:flex-row gap-10">
-
         <!-- ═══════════════════════════════════
              ЛЕВАЯ КОЛОНКА: обложка + действия
              ═══════════════════════════════════ -->
         <div class="w-full lg:w-64 shrink-0 flex flex-col gap-4">
-
           <!-- Обложка книги с тенью и скруглением -->
           <div class="relative group">
             <div
-              class="w-full aspect-[2/3] max-w-[180px] mx-auto lg:max-w-full rounded-2xl overflow-hidden shadow-(--shadow-lg) ring-1 ring-black/5 transition-transform duration-300 group-hover:scale-[1.02]"
+              class="w-full aspect-2/3 max-w-[180px] mx-auto lg:max-w-full rounded-2xl overflow-hidden shadow-(--shadow-lg) ring-1 ring-black/5 transition-transform duration-300 group-hover:scale-[1.02]"
             >
               <img
                 v-if="book.thumbnail"
@@ -319,7 +266,9 @@ async function handleCurrentPageChange(value: number) {
             v-if="userMediaEntry?.status === 'in_progress' && book.pageCount"
             class="card-padded"
           >
-            <p class="text-xs font-semibold text-(--text-tertiary) uppercase tracking-wider mb-3">
+            <p
+              class="text-xs font-semibold text-(--text-tertiary) uppercase tracking-wider mb-3"
+            >
               Текущая страница
             </p>
             <Slider :max="book.pageCount" v-model="currentPage" />
@@ -327,7 +276,9 @@ async function handleCurrentPageChange(value: number) {
 
           <!-- Блок выставления рейтинга звёздами (1-5) -->
           <div v-if="userMediaEntry" class="card-padded">
-            <p class="text-xs font-semibold text-(--text-tertiary) uppercase tracking-wider mb-3">
+            <p
+              class="text-xs font-semibold text-(--text-tertiary) uppercase tracking-wider mb-3"
+            >
               Ваш рейтинг
             </p>
             <div class="flex gap-1">
@@ -353,34 +304,34 @@ async function handleCurrentPageChange(value: number) {
 
           <!-- Мета-информация: ISBN, издатель, язык -->
           <div class="card-padded space-y-3">
-            <div
-              v-if="book.isbn"
-              class="flex items-start gap-3"
-            >
+            <div v-if="book.isbn" class="flex items-start gap-3">
               <Hash :size="15" class="text-(--primary-500) shrink-0 mt-0.5" />
               <div>
                 <p class="text-xs text-(--text-tertiary) mb-0.5">ISBN</p>
-                <p class="text-sm text-(--text-secondary) font-mono">{{ book.isbn }}</p>
+                <p class="text-sm text-(--text-secondary) font-mono">
+                  {{ book.isbn }}
+                </p>
               </div>
             </div>
-            <div
-              v-if="book.publisher"
-              class="flex items-start gap-3"
-            >
-              <Building2 :size="15" class="text-(--primary-500) shrink-0 mt-0.5" />
+            <div v-if="book.publisher" class="flex items-start gap-3">
+              <Building2
+                :size="15"
+                class="text-(--primary-500) shrink-0 mt-0.5"
+              />
               <div>
                 <p class="text-xs text-(--text-tertiary) mb-0.5">Издатель</p>
-                <p class="text-sm text-(--text-secondary)">{{ book.publisher }}</p>
+                <p class="text-sm text-(--text-secondary)">
+                  {{ book.publisher }}
+                </p>
               </div>
             </div>
-            <div
-              v-if="book.language"
-              class="flex items-start gap-3"
-            >
+            <div v-if="book.language" class="flex items-start gap-3">
               <Globe :size="15" class="text-(--primary-500) shrink-0 mt-0.5" />
               <div>
                 <p class="text-xs text-(--text-tertiary) mb-0.5">Язык</p>
-                <p class="text-sm text-(--text-secondary) uppercase">{{ book.language }}</p>
+                <p class="text-sm text-(--text-secondary) uppercase">
+                  {{ book.language }}
+                </p>
               </div>
             </div>
           </div>
@@ -402,7 +353,6 @@ async function handleCurrentPageChange(value: number) {
              ПРАВАЯ КОЛОНКА: детали книги
              ═══════════════════════════════════ -->
         <div class="flex-1 min-w-0 flex flex-col gap-6">
-
           <!-- Заголовок и основная мета -->
           <div>
             <h1 class="mb-3 leading-tight">{{ book.title }}</h1>
@@ -414,11 +364,15 @@ async function handleCurrentPageChange(value: number) {
                 class="flex items-center gap-1.5 text-(--text-secondary)"
               >
                 <Users :size="15" class="text-(--primary-500)" />
-                <span class="text-sm font-medium">{{ book.authors.join(", ") }}</span>
+                <span class="text-sm font-medium">{{
+                  book.authors.join(", ")
+                }}</span>
               </div>
 
               <span
-                v-if="book.authors?.length && (publicationYear || book.pageCount)"
+                v-if="
+                  book.authors?.length && (publicationYear || book.pageCount)
+                "
                 class="w-1 h-1 rounded-full bg-(--gray-300)"
               />
 
@@ -470,7 +424,9 @@ async function handleCurrentPageChange(value: number) {
 
           <!-- Категории книги в виде тегов -->
           <div v-if="book.categories && book.categories.length > 0">
-            <p class="text-xs font-semibold text-(--text-tertiary) uppercase tracking-wider mb-2">
+            <p
+              class="text-xs font-semibold text-(--text-tertiary) uppercase tracking-wider mb-2"
+            >
               Категории
             </p>
             <div class="flex flex-wrap gap-2">
