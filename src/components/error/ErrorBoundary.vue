@@ -22,106 +22,55 @@
  *     </template>
  *   </ErrorBoundary>
  */
-import { ref, onErrorCaptured } from 'vue'
+import { ref, onErrorCaptured } from "vue";
 
-/**
- * Пропс resetOnUpdate: если true — ErrorBoundary автоматически
- * сбрасывает ошибку при обновлении пропсов родителя.
- * Полезно когда контент меняется (например, пользователь перешёл
- * на другую страницу) и нужно дать компоненту ещё один шанс.
- */
 interface Props {
-  resetOnUpdate?: boolean
+  resetOnUpdate?: boolean;
 }
 
 withDefaults(defineProps<Props>(), {
   resetOnUpdate: false,
-})
+});
 
-/** Текущая пойманная ошибка. null — значит всё ок, рендерим slot по умолчанию */
-const error = ref<Error | null>(null)
+const error = ref<Error | null>(null);
+const errorInfo = ref<string>("");
 
-/**
- * Информация об источнике ошибки.
- * Vue передаёт строку вида "in component <ComponentName>"
- * или "in watcher for ..." — помогает при отладке.
- */
-const errorInfo = ref<string>('')
-
-/**
- * Сброс состояния ошибки — показываем дочерний компонент снова.
- * Передаётся в slot как функция, чтобы пользователь мог вызвать
- * reset из кнопки "Попробовать снова".
- */
 function reset(): void {
-  error.value = null
-  errorInfo.value = ''
+  error.value = null;
+  errorInfo.value = "";
 }
 
-/**
- * Полная перезагрузка страницы.
- *
- * Вынесена в функцию вместо инлайн-вызова window.location.reload()
- * в template — иначе TypeScript в Vue template context не находит
- * глобальный объект window и выдаёт ошибку компиляции.
- *
- * В <script setup> window доступен как обычный глобал браузера.
- */
 function reloadPage(): void {
-  window.location.reload()
+  window.location.reload();
 }
 
-/**
- * onErrorCaptured перехватывает ошибки из всего поддерева.
- *
- * Возвращаем false — это говорит Vue НЕ распространять ошибку
- * дальше вверх по дереву компонентов. Мы её обработали сами.
- *
- * Если вернуть true (или ничего) — ошибка пойдёт к следующему
- * ErrorBoundary или до глобального app.config.errorHandler.
- */
 onErrorCaptured((err: Error, _instance, info: string): false => {
-  error.value = err
-  errorInfo.value = info
+  error.value = err;
+  errorInfo.value = info;
 
-  // Логируем в консоль для разработчика, даже если показываем UI
-  console.error('[ErrorBoundary] Поймана ошибка:', err)
-  console.error('[ErrorBoundary] Источник:', info)
+  console.error("[ErrorBoundary] Поймана ошибка:", err);
+  console.error("[ErrorBoundary] Источник:", info);
 
-  return false
-})
+  return false;
+});
 </script>
 
 <template>
-  <!--
-    Если ошибки нет — рендерим дочерний контент как обычно.
-    Если есть ошибка:
-    1. Проверяем, передан ли кастомный #fallback слот
-    2. Если да — рендерим его с доступом к { error, reset }
-    3. Если нет — показываем встроенный fallback UI
-  -->
   <slot v-if="!error" />
 
   <template v-else>
-    <!--
-      Кастомный fallback: родитель сам решает что показать.
-      Пример: <template #fallback="{ error, reset }"> ... </template>
-    -->
     <slot
       v-if="$slots.fallback"
       name="fallback"
       :error="error"
       :reset="reset"
     />
-
-    <!-- Встроенный fallback UI — используется по умолчанию -->
     <div
       v-else
       class="error-boundary-fallback"
       role="alert"
       aria-live="assertive"
     >
-      <!-- Иконка предупреждения — SVG без зависимостей -->
       <div class="error-boundary-icon">
         <svg
           width="32"
@@ -134,7 +83,9 @@ onErrorCaptured((err: Error, _instance, info: string): false => {
           stroke-linejoin="round"
           aria-hidden="true"
         >
-          <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+          <path
+            d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"
+          />
           <line x1="12" y1="9" x2="12" y2="13" />
           <line x1="12" y1="17" x2="12.01" y2="17" />
         </svg>
@@ -144,37 +95,31 @@ onErrorCaptured((err: Error, _instance, info: string): false => {
 
       <p class="error-boundary-message">
         Произошла непредвиденная ошибка в этом разделе.
-        Остальная часть приложения работает нормально.
       </p>
-
-      <!--
-        Технические детали — скрыты в <details>.
-        Пользователь не видит технический шум, но может
-        раскрыть для отправки баг-репорта.
-      -->
       <details class="error-boundary-details">
         <summary>Технические детали</summary>
         <div class="error-boundary-stack">
           <p class="error-boundary-stack-message">{{ error?.message }}</p>
-          <p v-if="errorInfo" class="error-boundary-stack-info">{{ errorInfo }}</p>
-          <pre v-if="error?.stack" class="error-boundary-stack-trace">{{ error.stack }}</pre>
+          <p v-if="errorInfo" class="error-boundary-stack-info">
+            {{ errorInfo }}
+          </p>
+          <pre v-if="error?.stack" class="error-boundary-stack-trace">{{
+            error.stack
+          }}</pre>
         </div>
       </details>
 
       <div class="error-boundary-actions">
-        <!--
-          reset() — сбрасывает состояние ошибки.
-          Компонент попробует отрендериться заново.
-        -->
-        <button class="error-boundary-btn error-boundary-btn--primary" @click="reset">
+        <button
+          class="error-boundary-btn error-boundary-btn--primary"
+          @click="reset"
+        >
           Попробовать снова
         </button>
-
-        <!--
-          Полная перезагрузка страницы — последний резерв.
-          Решает проблемы с corrupted state в сторах.
-        -->
-        <button class="error-boundary-btn error-boundary-btn--secondary" @click="reloadPage">
+        <button
+          class="error-boundary-btn error-boundary-btn--secondary"
+          @click="reloadPage"
+        >
           Перезагрузить страницу
         </button>
       </div>

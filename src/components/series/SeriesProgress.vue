@@ -55,6 +55,34 @@ async function loadSeasons() {
 
   try {
     seasons.value = await kinopoiskService.getTVSeasons(props.movieId);
+    if (props.userMediaEntry.status === 'completed' && seasons.value.length > 0) {
+      // Считаем текущий прогресс
+      const currentProgress = calculateSeriesProgress(seasons.value, watchedEpisodes.value);
+
+      // Проверяем нужна ли инициализация
+      const isEmpty = Object.keys(watchedEpisodes.value).length === 0;
+      const isIncomplete = currentProgress.completionPercentage < 100;
+
+      if (isEmpty || isIncomplete) {
+        console.log('[SeriesProgress] Автоинициализация: сериал завершён, помечаем все серии как просмотренные');
+
+        // Создаём новый объект watched_episodes со всеми сезонами
+        const fullWatchedEpisodes: WatchedEpisodesMap = {};
+
+        // Для каждого сезона добавляем все номера серий
+        seasons.value.forEach(season => {
+          const episodeNumbers = season.episodes.map(ep => ep.episodeNumber);
+          fullWatchedEpisodes[season.number.toString()] = episodeNumbers;
+        });
+
+        // Обновляем локальное состояние
+        watchedEpisodes.value = fullWatchedEpisodes;
+
+        // Синхронизируем с БД
+        // Не ждём завершения - пользователь сразу видит обновлённый UI
+        syncProgress();
+      }
+    }
   } catch (e) {
     error.value = 'Не удалось загрузить информацию о сезонах';
     console.error('Error loading TV seasons:', e);

@@ -123,6 +123,17 @@ import type {
 	return updated;
   }
 
+  export function markSeriesWatched(
+	watchedEpisodes: WatchedEpisodesMap,
+	seasons: KinopoiskTVSeason[]
+  ): WatchedEpisodesMap {
+	const updated = { ...watchedEpisodes };
+	seasons.forEach(season => {
+	  updated[season.number.toString()] = season.episodes.map(ep => ep.episodeNumber);
+	});
+	return updated;
+	}
+
 
   export function isEpisodeWatched(
 	watchedEpisodes: WatchedEpisodesMap,
