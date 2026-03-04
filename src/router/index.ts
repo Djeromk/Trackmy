@@ -48,6 +48,12 @@ const routes: RouteRecordRaw[] = [
     meta: { requiresAuth: false, guestOnly: true },
   },
   {
+    path: "/reset-password",
+    name: "reset-password",
+    component: () => import("@/views/{auth}/ResetPassword.vue"),
+    meta: { requiresAuth: false },
+  },
+  {
     path: "/:pathMatch(.*)*",
     name: "not-found",
     component: () => import("@/components/error/NotFound.vue"),
@@ -74,16 +80,12 @@ router.beforeEach(async (to, _from, next) => {
   const authStore = useAuthStore();
   const requiresAuth = to.meta.requiresAuth as boolean;
   const guestOnly = to.meta.guestOnly as boolean;
-console.log('requiresAuth', requiresAuth, 'guestOnly', guestOnly, 'authStore', authStore.isAuthenticated);
-if (!authStore.isAuthenticated){
-  await authStore.initialize()
-  console.log('authStore.isAuth', authStore.isAuthenticated);
-
-}
+  if (!authStore.isAuthenticated) {
+    await authStore.initialize();
+  }
   if (requiresAuth && !authStore.isAuthenticated) {
     next({ name: "login", query: { redirect: to.fullPath } });
-  }
-  else if (guestOnly && authStore.isAuthenticated) {
+  } else if (guestOnly && authStore.isAuthenticated) {
     next({ name: "dashboard" });
   } else {
     next();

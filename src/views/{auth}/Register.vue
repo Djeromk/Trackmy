@@ -15,33 +15,35 @@ const password = ref<string>("");
 const confirmPassword = ref<string>("");
 const errorMessage = ref<string>("");
 
-// Показывать ли пароли открытым текстом
 const showPassword = ref<boolean>(false);
 const showConfirmPassword = ref<boolean>(false);
 
-// Показываем экран успеха вместо формы
 const isSuccess = ref<boolean>(false);
 
-// ── Вычисляемые свойства для живого индикатора совпадения паролей ────────────
-
-/**
- * Совпадают ли пароли.
- * Проверяем только когда confirmPassword непустой — иначе преждевременные ошибки.
- */
 const passwordsMatch = computed<boolean>(
   () =>
-    confirmPassword.value.length > 0 && password.value === confirmPassword.value
+    confirmPassword.value.length > 0 &&
+    password.value === confirmPassword.value,
 );
 
 const passwordMismatch = computed<boolean>(
   () =>
-    confirmPassword.value.length > 0 && password.value !== confirmPassword.value
+    confirmPassword.value.length > 0 &&
+    password.value !== confirmPassword.value,
 );
 
-// ── Обработчик отправки ──────────────────────────────────────────────────────
+function isValidEmailFormat(email: string): boolean {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
+}
 
 async function handleRegister(): Promise<void> {
   errorMessage.value = "";
+
+  if (!isValidEmailFormat(email.value)) {
+    errorMessage.value = "Введите корректный email адрес";
+    return;
+  }
 
   if (
     !email.value ||
@@ -71,11 +73,10 @@ async function handleRegister(): Promise<void> {
   const result = await authStore.signUp(
     email.value,
     password.value,
-    name.value
+    name.value,
   );
 
   if (result.success) {
-    // Показываем экран успеха, затем редиректим
     isSuccess.value = true;
     setTimeout(() => {
       router.push("/");
@@ -87,14 +88,11 @@ async function handleRegister(): Promise<void> {
 </script>
 
 <template>
-  <!-- Корневой контейнер страницы -->
   <div class="auth-page">
-    <!-- ── Фоновый слой ───────────────────────────────────────────────────── -->
     <div class="auth-bg-layer">
       <div class="auth-grid-lines"></div>
       <div class="auth-center-glow"></div>
 
-      <!-- Декоративные слова — другие позиции и скорости чем в Login -->
       <div
         class="auth-poster"
         style="
@@ -132,7 +130,6 @@ async function handleRegister(): Promise<void> {
       </div>
     </div>
 
-    <!-- ── Шапка с логотипом ─────────────────────────────────────────────── -->
     <header class="auth-header">
       <router-link to="/" class="auth-logo">
         <span class="auth-logo-mark">M</span>
@@ -140,15 +137,11 @@ async function handleRegister(): Promise<void> {
       </router-link>
     </header>
 
-    <!-- ── Центральная зона ──────────────────────────────────────────────── -->
     <main class="auth-main">
-      <!-- auth-card--wide расширяет max-width для двухколоночной сетки паролей -->
       <div class="auth-card auth-card--wide">
-        <!-- ── Экран успеха — показывается вместо формы после регистрации ── -->
         <Transition name="auth-success-fade">
           <div v-if="isSuccess" class="auth-success-screen">
             <div class="auth-success-icon">
-              <!-- Иконка галочки из lucide-vue-next -->
               <Check :size="28" />
             </div>
             <p class="auth-success-title">Аккаунт создан!</p>
@@ -156,7 +149,6 @@ async function handleRegister(): Promise<void> {
           </div>
         </Transition>
 
-        <!-- ── Форма — скрывается после успеха ──────────────────────────── -->
         <Transition name="auth-success-fade">
           <div v-if="!isSuccess">
             <!-- Заголовок -->

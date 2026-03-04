@@ -1,14 +1,15 @@
 <script setup lang="ts">
 import InProgressHero from "@/components/dashboard/InProgressHero.vue";
+
 import ActivityCard from "@/components/dashboard/ActivityCard.vue";
-import MediaTypeCard from "@/components/dashboard/MediaTypeCard.vue";
+//import MediaTypeCard from "@/components/dashboard/MediaTypeCard.vue";
 import { BookOpen, Film, Gamepad2 } from "lucide-vue-next";
-import { ref, onMounted, computed } from "vue";
+import { ref, onMounted, computed, defineAsyncComponent } from "vue";
 import { useMediaStore } from "@/stores/media";
 import { useAuthStore } from "@/stores/auth";
-import SearchModal from "@/components/search/SearchModal.vue";
+//import SearchModal from "@/components/search/SearchModal.vue";
 import Banner from "@/components/dashboard/Banner.vue";
-import MediaAccordion from "@/components/accordion/MediaAccordion.vue";
+//import MediaAccordion from "@/components/accordion/MediaAccordion.vue";
 import SkeletonLoader from "@/components/skeleton/SkeletonLoader.vue";
 import type {
   MediaType,
@@ -29,12 +30,20 @@ const notification = ref<{ message: string; type: "success" | "error" } | null>(
 );
 let loading = ref(true)
 
-
+const SearchModal = defineAsyncComponent({
+  loader: () => import("@/components/search/SearchModal.vue"),
+})
+const MediaTypeCard = defineAsyncComponent({
+  loader: () => import("@/components/dashboard/MediaTypeCard.vue"),
+})
+const MediaAccordion = defineAsyncComponent({
+  loader: () => import("@/components/accordion/MediaAccordion.vue"),
+})
 onMounted(() => {
   loading.value = false
-  // if (authStore.user) {
-  //   mediaStore.fetchUserMedia();
-  // }
+  if (authStore.user) {
+    mediaStore.fetchUserMedia();
+  }
 });
 
 const inProgressItems = computed(() =>
