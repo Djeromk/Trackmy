@@ -70,7 +70,7 @@ function handleStatusClick(status: MediaStatus) {
         v-for="status in availableStatuses"
         :key="status.value"
         @click="handleStatusClick(status.value)"
-        class="select-btn w-full px-4 py-3 text-left text-base text-gray-700  cursor-pointer flex items-center justify-between"
+        class="select-btn w-full px-4 py-3 text-left text-base text-(--text-primary) cursor-pointer flex items-center justify-between"
         :class="{
           'bg-green-50 text-black': currentStatus === status.value,
         }"

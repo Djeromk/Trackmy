@@ -17,7 +17,7 @@ function handleRatingClick(rating: number) {
 
 <template>
   <div class="w-full card-neo shadow-neo p-4">
-    <p class="text-sm text-gray-500 mb-2 font-medium">Ваш рейтинг</p>
+    <p class="text-sm text-(--text-primary) mb-2 font-medium">Ваш рейтинг</p>
     <div class="flex gap-1">
       <button
         v-for="star in 5"

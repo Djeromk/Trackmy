@@ -27,7 +27,7 @@ const userInitials = computed(() => {
           <ThemeToggle />
           <template v-if="authStore.isAuthenticated">
             <router-link :to="{ path: '/', hash: '#my-lists' }"
-              class="px-4 py-2 rounded-xl text-gray-700 hover:text-primary-600 transition-colors">
+              class="px-4 py-2 rounded-xl text-(--text-primary) hover:text-primary-600 transition-colors">
               Мои списки
             </router-link>
 
@@ -52,7 +52,7 @@ const userInitials = computed(() => {
 
           <template v-else>
             <router-link to="/login"
-              class="px-4 py-2 rounded-xl text-gray-700 hover:text-primary-600 transition-colors">
+              class="px-4 py-2 rounded-xl text-(--text-primary) hover:text-primary-600 transition-colors">
               Войти
             </router-link>
             <router-link to="/register" class="btn-(--neo-primary)">

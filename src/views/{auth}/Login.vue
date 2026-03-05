@@ -129,7 +129,7 @@ async function handleDemoLogin(): Promise<void> {
         <div class="auth-card-header">
           <!-- Eyebrow — маленькая надпись над заголовком -->
           <p class="auth-eyebrow">Добро пожаловать</p>
-          <h1 class="auth-title">Войдите</h1>
+          <h1 class="auth-title text-(--text-primary)">Войдите</h1>
           <p class="auth-subtitle">Отслеживайте фильмы, книги и игры</p>
         </div>
 
@@ -174,7 +174,7 @@ async function handleDemoLogin(): Promise<void> {
               </button>
               <router-link
             to="/reset-password"
-            class="auth-link-muted text-xs block mt-2"
+            class="auth-link-muted text-xs block mt-2 text-(--text-primary)"
           >
             Забыли пароль?
           </router-link>
@@ -211,7 +211,7 @@ async function handleDemoLogin(): Promise<void> {
         <div class="auth-card-footer" style="margin-top: 0.5rem">
           <button
             type="button"
-            class="auth-link-muted bg-(--muted-foreground) rounded-xl p-2 text-black cursor-pointer hover:bg-(--secondary)"
+            class="auth-link-muted bg-(--muted) rounded-xl p-2 text-(--text-primary) cursor-pointer hover:bg-(--muted-foreground)"
             @click="handleDemoLogin"
           >
             Попробовать демо без аккаунта

@@ -16,10 +16,10 @@ function handleRegister() {
   <div class="card-neo mb-8 bg-linear-to-r from-primary-50 to-primary-100">
     <div class="flex flex-col md:flex-row items-center justify-between gap-6">
       <div class="flex-1">
-        <h2 class="text-2xl font-bold text-gray-800 mb-2">
+        <h2 class="text-2xl font-bold text-(--text-primary) mb-2">
           Добро пожаловать в Media Tracker! 👋
         </h2>
-        <p class="text-gray-700">
+        <p class="text-(--text-primary)">
           Отслеживайте фильмы, сериалы, книги и игры. Создайте аккаунт, чтобы сохранять свой прогресс,
           ставить оценки и делиться списками с друзьями.
         </p>

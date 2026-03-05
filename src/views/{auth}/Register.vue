@@ -154,7 +154,7 @@ async function handleRegister(): Promise<void> {
             <!-- Заголовок -->
             <div class="auth-card-header">
               <p class="auth-eyebrow">Новый аккаунт</p>
-              <h1 class="auth-title" style="font-size: 1.875rem">
+              <h1 class="auth-title text-(--text-primary)" style="font-size: 1.875rem">
                 Регистрация
               </h1>
               <p class="auth-subtitle">Начните отслеживать свою коллекцию</p>
