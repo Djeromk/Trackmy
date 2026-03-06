@@ -7,34 +7,16 @@ import type {
   ExternalGame,
   ExternalMovie,
 } from "@/types";
-import {
-  getItemId,
-  getTitle,
-  getImage,
-  getMetacritic,
-  getReleaseDate,
-  getSubtitle,
-  getSearchPlaceholder,
-  getAvailableStatuses,
-  getStatusIcon,
-  getStatusLabel,
-  isCurrentStatus,
-  createImageErrorHandler,
-} from "./utils";
+import * as utils from "./utils";
 import { kinopoiskService } from "@/services/api/kinopoisk";
 import { booksService } from "@/services/api/google-books";
 import { gamesService } from "@/services/api/games";
 import { useMediaStore } from "@/stores/media";
 import { MEDIA_TYPE_LABELS } from "@/types";
 import fallbackImage from "@/assets/fallback.svg";
-import {
-  X,
-  ChevronDown,
-  Check,
-  Archive,
-  ClockFading,
-  CircleCheckBig,
-} from "lucide-vue-next";
+import StatusDropdown from "@/components/common/StatusDropdown.vue";
+
+import { X } from "lucide-vue-next";
 
 interface Props {
   mediaType: MediaType;
@@ -51,19 +33,10 @@ interface Emits {
 
 interface EnrichedSearchResult {
   item: ExternalMovie | ExternalBook | ExternalGame;
-  /** Внешний ID из стороннего API — используется как ключ для v-for и поиска совпадений */
   id: string;
-  /** true если этот элемент уже добавлен в коллекцию пользователя */
   isAdded: boolean;
-  /** Текущий статус в коллекции, null если элемент не добавлен */
   currentStatus: MediaStatus | null;
-  /** ID записи в таблице user_media — нужен для обновления статуса */
   userMediaId: string | null;
-}
-
-interface DropdownCoords {
-  top: number;
-  right: number;
 }
 
 const props = defineProps<Props>();
@@ -95,24 +68,11 @@ function moveFocus(delta: number) {
   itemRef.value[next]?.focus();
 }
 
-const activeDropdown = ref<string | null>(null);
-const dropdownCoords = ref<DropdownCoords>({ top: 0, right: 0 });
 let searchTimeout: ReturnType<typeof setTimeout> | null = null;
 
-/**
- * Computed: обогащённые результаты поиска.
- *
- * Берём сырые результаты из API и для каждого проверяем,
- * есть ли он в коллекции пользователя (mediaStore.userMedia).
- * Сравнение по media.external_id — ID из внешнего API, который
- * сохраняется при добавлении элемента в коллекцию.
- *
- * Вынесено в computed, чтобы template не вызывал эти вычисления
- * заново для каждого элемента при каждом рендере.
- */
 const enrichedResults = computed<EnrichedSearchResult[]>(() => {
   return searchResults.value.map((item) => {
-    const itemId = getItemId(item);
+    const itemId = utils.getItemId(item);
     const userMediaItem = mediaStore.userMedia.find(
       (userMedia) => userMedia.media?.external_id === itemId,
     );
@@ -130,32 +90,8 @@ watch(enrichedResults, () => {
   activeIndex.value = -1;
 });
 
-/** Список доступных статусов зависит от типа медиа */
-const availableStatuses = computed(() => getAvailableStatuses(props.mediaType));
-const placeholder = computed(() => getSearchPlaceholder(props.mediaType));
-
-/**
- * Активный результат — элемент, чей дропдаун сейчас открыт.
- * Нужен в блоке Teleport: он находится вне v-for и не имеет
- * прямого доступа к переменной result текущей итерации.
- */
-const activeResult = computed<EnrichedSearchResult | undefined>(() =>
-  enrichedResults.value.find((r) => r.id === activeDropdown.value),
-);
-
-function getIconComponent(
-  iconName: string,
-): typeof Archive | typeof ClockFading | typeof CircleCheckBig | null {
-  const icons: Record<
-    string,
-    typeof Archive | typeof ClockFading | typeof CircleCheckBig
-  > = {
-    Archive,
-    ClockFading,
-    CircleCheckBig,
-  };
-  return icons[iconName] ?? null;
-}
+const availableStatuses = computed(() => utils.getAvailableStatuses(props.mediaType));
+const placeholder = computed(() => utils.getSearchPlaceholder(props.mediaType));
 
 watch(searchQuery, (newQuery) => {
   if (searchTimeout) clearTimeout(searchTimeout);
@@ -200,68 +136,28 @@ async function performSearch(query: string) {
 function handleClose() {
   searchQuery.value = "";
   searchResults.value = [];
-  activeDropdown.value = null;
   emit("close");
 }
 
-const handleImageError = createImageErrorHandler(fallbackImage);
+const handleImageError = utils.createImageErrorHandler(fallbackImage);
 
-/**
- * Открывает/закрывает дропдаун для конкретного элемента.
- *
- * При открытии измеряем координаты кнопки через getBoundingClientRect()
- * и сохраняем в dropdownCoords. Дропдаун рендерится через Teleport в <body>
- * с position:fixed — поэтому нужны координаты относительно viewport.
- *
- * Teleport нужен, чтобы overflow:auto/hidden на родительских контейнерах
- * (скролл-список, модалка) не обрезали дропдаун визуально.
- *
- * @param itemId — ID элемента в списке результатов
- * @param event  — MouseEvent клика на кнопку; из currentTarget берём HTMLElement
- */
-function toggleDropdown(itemId: string, event: MouseEvent | KeyboardEvent) {
-  // Закрываем если уже открыт
-  if (activeDropdown.value === itemId) {
-    activeDropdown.value = null;
-    return;
-  }
-  const button = event.currentTarget as HTMLButtonElement;
-  const rect = button.getBoundingClientRect();
-
-  const estimatedDropdownHeight = availableStatuses.value.length * 44 + 8;
-  const spaceBelow = window.innerHeight - rect.bottom;
-  const openUpward = spaceBelow < estimatedDropdownHeight;
-
-  dropdownCoords.value = {
-    top: openUpward ? rect.top - estimatedDropdownHeight - 6 : rect.bottom + 6,
-    right: window.innerWidth - rect.right,
-  };
-
-  activeDropdown.value = itemId;
-}
-
-async function handleSelectWithStatus(
+function handleSelectWithStatus(
   result: EnrichedSearchResult,
   status: MediaStatus,
 ) {
   if (result.isAdded && result.currentStatus === status) {
-    activeDropdown.value = null;
     return;
   }
 
   if (result.isAdded && result.userMediaId) {
-    await mediaStore.updateMedia(result.userMediaId, {
+    mediaStore.updateMedia(result.userMediaId, {
       status,
       is_finished: status === "completed",
       completed_at: status === "completed" ? new Date().toISOString() : null,
     });
-    activeDropdown.value = null;
     return;
   }
-
   emit("select", result.item, status);
-  activeDropdown.value = null;
-  // handleClose();
 }
 
 const vFocus = {
@@ -272,17 +168,15 @@ const vFocus = {
 </script>
 
 <template>
-  <!-- Overlay: затемнённый фон; клик вне модалки закрывает её -->
   <Transition name="fade">
     <div
       class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-hidden"
       @click.self="handleClose"
       @keydown.esc="handleClose"
     >
-
       <div
         class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[85vh] flex flex-col overflow-hidden"
-        @click="activeDropdown = null"
+        @click="handleClose"
       >
         <div
           class="flex items-center justify-between px-6 pt-5 pb-4 border-b border-gray-100 shrink-0"
@@ -330,22 +224,15 @@ const vFocus = {
             <li
               v-for="result in enrichedResults"
               :key="result.id"
-              ref="itemRef"
-              tabindex="0"
               class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-gray-50 transition-colors"
-              @click.stop
-              @keydown.down.prevent="moveFocus(1)"
-              @keydown.up.prevent="moveFocus(-1)"
-              @keydown.esc="handleClose"
-              @keydown.enter.prevent="toggleDropdown(result.id, $event)"
             >
               <div
                 class="w-10 h-14 shrink-0 rounded-lg overflow-hidden bg-gray-100 shadow-sm"
               >
                 <img
-                  v-if="getImage(result.item)"
-                  :src="getImage(result.item)!"
-                  :alt="getTitle(result.item)"
+                  v-if="utils.getImage(result.item)"
+                  :src="utils.getImage(result.item)!"
+                  :alt="utils.getTitle(result.item)"
                   loading="lazy"
                   class="w-full h-full object-cover"
                   @error="handleImageError"
@@ -363,17 +250,17 @@ const vFocus = {
                   <h3
                     class="font-semibold text-sm text-gray-900 truncate hover:text-primary-600 transition-colors leading-snug"
                   >
-                    {{ getTitle(result.item) }}
+                    {{ utils.getTitle(result.item) }}
                   </h3>
                 </router-link>
 
                 <p class="text-xs text-gray-500 mt-0.5 truncate leading-tight">
-                  {{ getSubtitle(result.item) }}
+                  {{ utils.getSubtitle(result.item) }}
                 </p>
 
                 <div class="flex items-center gap-2 mt-1 flex-wrap">
                   <span class="text-xs text-gray-400">
-                    {{ getReleaseDate(result.item) }}
+                    {{ utils.getReleaseDate(result.item) }}
                   </span>
 
                   <span
@@ -392,7 +279,7 @@ const vFocus = {
                       'bg-red-500': result.item.metacritic < 50,
                     }"
                   >
-                    {{ getMetacritic(result.item) }}
+                    {{ utils.getMetacritic(result.item) }}
                   </span>
 
                   <!-- Рейтинги фильмов -->
@@ -435,47 +322,19 @@ const vFocus = {
                   </span>
                 </div>
               </div>
-
-              <!-- Кнопка добавить / сменить статус -->
               <div class="shrink-0" @click.stop>
-                <!-- Уже добавлено — кнопка со статусом -->
-                <button
-                  v-if="result.isAdded"
-                  @click="(e) => toggleDropdown(result.id, e)"
-                  class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium border-2 border-green-400 bg-green-50 text-green-700 hover:bg-green-100 active:bg-green-200 transition-all cursor-pointer whitespace-nowrap"
-                >
-                  <component
-                    :is="getIconComponent(getStatusIcon(result.currentStatus))"
-                    :size="13"
-                    class="shrink-0"
-                  />
-                  <span class="max-w-[80px] truncate">
-                    {{ getStatusLabel(mediaType, result.currentStatus) }}
-                  </span>
-                  <ChevronDown
-                    :size="11"
-                    :class="[
-                      'transition-transform duration-200 shrink-0',
-                      activeDropdown === result.id ? 'rotate-180' : '',
-                    ]"
-                  />
-                </button>
-
-                <!-- Ещё не добавлено -->
-                <button
-                  v-else
-                  @click="(e) => toggleDropdown(result.id, e)"
-                  class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium border-2 border-gray-200 bg-white text-gray-600 hover:border-primary-400 hover:bg-primary-50 hover:text-primary-700 active:bg-primary-100 transition-all cursor-pointer whitespace-nowrap"
-                >
-                  <span>Добавить</span>
-                  <ChevronDown
-                    :size="11"
-                    :class="[
-                      'transition-transform duration-200 shrink-0',
-                      activeDropdown === result.id ? 'rotate-180' : '',
-                    ]"
-                  />
-                </button>
+                <StatusDropdown
+                  :current-status="result.currentStatus"
+                  :available-statuses="availableStatuses"
+                  :placeholder-text="result.isAdded ? undefined : 'Добавить'"
+                  :compact="true"
+                  :button-class="
+                    result.isAdded
+                      ? 'border-green-400 bg-green-50 text-green-700'
+                      : ''
+                  "
+                  @select="(status) => handleSelectWithStatus(result, status)"
+                />
               </div>
             </li>
           </ul>
@@ -488,67 +347,12 @@ const vFocus = {
           Ничего не найдено
         </div>
 
-        <!-- Ожидание ввода -->
         <div v-else class="text-center py-10 text-gray-400 flex-1 text-base">
           Введите название для поиска
         </div>
       </div>
     </div>
   </Transition>
-
-  <!--
-    Дропдаун статуса через Teleport.
-
-    Проблема без Teleport: дропдаун — потомок скролл-контейнера с overflow:auto.
-    Браузер обрезает position:absolute потомков когда на предке стоит overflow
-    отличный от visible, даже при высоком z-index. У последних элементов списка
-    дропдаун не вылезает вниз — он встраивается в контейнер, вызывая скролл.
-
-    Решение: Teleport переносит разметку прямо в <body>, за пределы всех
-    overflow-контейнеров. Позиция задаётся через position:fixed + числовые
-    координаты viewport из dropdownCoords, вычисленные при клике на кнопку.
-
-    activeResult — computed, который находит нужный EnrichedSearchResult
-    по activeDropdown ID. Нужен потому, что Teleport-блок находится вне v-for
-    и не имеет доступа к переменной result текущей итерации.
-  -->
-  <Teleport to="body">
-    <Transition name="dropdown">
-      <div
-        v-if="activeDropdown !== null && activeResult !== undefined"
-        class="fixed z-9999"
-        :style="{
-          top: dropdownCoords.top + 'px',
-          right: dropdownCoords.right + 'px',
-        }"
-        @click.stop
-      >
-        <div
-          class="bg-white rounded-xl shadow-2xl border border-gray-100 overflow-hidden min-w-[164px] py-1"
-        >
-          <button
-            v-for="status in availableStatuses"
-            :key="status.value"
-            @click="handleSelectWithStatus(activeResult, status.value)"
-            :disabled="isCurrentStatus(activeResult, status.value)"
-            class="w-full cursor-pointer px-4 py-2.5 text-left transition-colors flex items-center gap-2 disabled:cursor-not-allowed"
-            :class="
-              isCurrentStatus(activeResult, status.value)
-                ? 'bg-green-50 text-green-700'
-                : 'text-gray-700 hover:bg-gray-50 active:bg-gray-100'
-            "
-          >
-            <span class="text-sm font-medium flex-1">{{ status.label }}</span>
-            <Check
-              v-if="isCurrentStatus(activeResult, status.value)"
-              :size="13"
-              class="text-green-600 shrink-0"
-            />
-          </button>
-        </div>
-      </div>
-    </Transition>
-  </Teleport>
 </template>
 
 <style scoped>
@@ -559,15 +363,5 @@ const vFocus = {
 .fade-enter-from,
 .fade-leave-to {
   opacity: 0;
-}
-
-.dropdown-enter-active,
-.dropdown-leave-active {
-  transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
-}
-.dropdown-enter-from,
-.dropdown-leave-to {
-  opacity: 0;
-  transform: translateY(-6px) scale(0.97);
 }
 </style>

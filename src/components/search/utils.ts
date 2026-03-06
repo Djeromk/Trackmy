@@ -76,7 +76,7 @@ function getSearchPlaceholder(mediaType: MediaType): string {
   return labels[mediaType] ?? labels.other;
 }
 
-function getAvailableStatuses(mediaType: MediaType): StatusOption[] {
+function getAvailableStatuses(mediaType?: MediaType): StatusOption[] {
   const labels =
     mediaType === "book"
       ? BOOKS_STATUS_LABELS
