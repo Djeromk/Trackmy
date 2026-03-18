@@ -8,7 +8,7 @@ import { ref, onMounted, computed, defineAsyncComponent } from "vue";
 import { useMediaStore } from "@/stores/media";
 import { useAuthStore } from "@/stores/auth";
 //import SearchModal from "@/components/search/SearchModal.vue";
-import Banner from "@/components/dashboard/Banner.vue";
+import WelcomeCTA from "@/components/dashboard/WelcomeCTA.vue";
 //import MediaAccordion from "@/components/accordion/MediaAccordion.vue";
 import SkeletonLoader from "@/components/skeleton/SkeletonLoader.vue";
 import type {
@@ -219,7 +219,7 @@ function handleViewAllInProgress() {}
 
       <!-- Шапка -->
 
-      <Banner v-if="!authStore.user" />
+      <WelcomeCTA v-if="!authStore.user" />
 
       <!-- Hero: в процессе -->
       <InProgressHero
