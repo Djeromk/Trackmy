@@ -8,7 +8,7 @@ import { ref, onMounted, computed, defineAsyncComponent } from "vue";
 import { useMediaStore } from "@/stores/media";
 import { useAuthStore } from "@/stores/auth";
 //import SearchModal from "@/components/search/SearchModal.vue";
-import Banner from "@/components/dashboard/Banner.vue";
+import WelcomeCTA from "@/components/dashboard/WelcomeCTA.vue";
 //import MediaAccordion from "@/components/accordion/MediaAccordion.vue";
 import SkeletonLoader from "@/components/skeleton/SkeletonLoader.vue";
 import type {
@@ -219,7 +219,7 @@ function handleViewAllInProgress() {}
 
       <!-- Шапка -->
 
-      <Banner v-if="!authStore.user" />
+      <WelcomeCTA v-if="!authStore.user" />
 
       <!-- Hero: в процессе -->
       <InProgressHero
@@ -229,14 +229,14 @@ function handleViewAllInProgress() {}
         @view-all="handleViewAllInProgress"
       />
 
-      <div class="mb-6">
+      <!-- <div class="mb-6">
+      </div> -->
+      
+      <div v-if="authStore.user" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-5">
         <h2 class="mb-2">Статистика</h2>
         <p class="text-sm text-(--text-tertiary)">
           Отслеживайте свой прогресс по всем категориям
         </p>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-5">
         <ActivityCard
           :books-stats="activityStats.booksStats"
           :movies-stats="activityStats.moviesStats"
