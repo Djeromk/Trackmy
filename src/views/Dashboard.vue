@@ -229,14 +229,14 @@ function handleViewAllInProgress() {}
         @view-all="handleViewAllInProgress"
       />
 
-      <div class="mb-6">
+      <!-- <div class="mb-6">
+      </div> -->
+      
+      <div v-if="authStore.user" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-5">
         <h2 class="mb-2">Статистика</h2>
         <p class="text-sm text-(--text-tertiary)">
           Отслеживайте свой прогресс по всем категориям
         </p>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-5">
         <ActivityCard
           :books-stats="activityStats.booksStats"
           :movies-stats="activityStats.moviesStats"
