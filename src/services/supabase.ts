@@ -183,7 +183,7 @@ export const db = {
     if (updates.watched_episodes !== undefined)
       dbUpdates.watched_episodes = updates.watched_episodes;
 
-    dbUpdates.updated_at = new Date().toISOString();
+   // dbUpdates.updated_at = new Date().toISOString();
 
     return supabase.from("user_media").update(dbUpdates).eq("id", id);
   },
@@ -211,7 +211,7 @@ export const db = {
       dbUpdates.current_episode = updates.current_episode;
     }
 
-    dbUpdates.updated_at = new Date().toISOString();
+    //dbUpdates.updated_at = new Date().toISOString();
 
     return supabase
       .from('user_media')

@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import AppHeader from "@/components/layout/AppHeader.vue";
-import Footer from "./components/layout/Footer.vue";
+import Footer from "@/components/layout/Footer.vue";
 import AppWrapper from '@/AppWrapper.vue'
-import ErrorBoundary from "./components/error/ErrorBoundary.vue";
-import SkeletonLoader from "./components/skeleton/SkeletonLoader.vue";
+import ErrorBoundary from "@/components/error/ErrorBoundary.vue";
+import SkeletonLoader from "@/components/skeleton/SkeletonLoader.vue";
 </script>
 
 <template>

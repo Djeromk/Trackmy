@@ -107,7 +107,7 @@ export const useAuthStore = defineStore('auth', () => {
         password,
         options: {
           data: {
-            name: name || '' // Передаем имя в метаданные
+            name: name?.trim() || '' // Передаем имя в метаданные
           }
         }
       })
@@ -119,26 +119,28 @@ export const useAuthStore = defineStore('auth', () => {
       }
 
       // Устанавливаем пользователя в состояние
-      await setUserFromSession(authData.user as any)
+      await setUserFromSession(authData.user as Parameters<typeof setUserFromSession>[0])
 
       // Шаг 2: Создаем профиль в таблице profiles (если передано имя)
-      if (name && name.trim()) {
-        const { data: profileData, error: profileError } = await supabase
-          .from('profiles')
-          .insert({
-            id: authData.user.id, // Foreign key на auth.users.id
-            name: name.trim()
-          })
-          .select()
-          .single()
+      // if (name && name.trim()) {
+      //   const { data: profileData, error: profileError } = await supabase
+      //     .from('profiles')
+      //     .insert({
+      //       id: authData.user.id, // Foreign key на auth.users.id
+      //       name: name.trim()
+      //     })
+      //     .select()
+      //     .single()
 
-        if (profileError) {
-          console.error('Profile creation failed:', profileError)
-          // Можно добавить логику повторной попытки или оставить профиль пустым
-        } else {
-          profile.value = profileData as UserProfile
-        }
-      }
+      //   if (profileError) {
+      //     console.error('Profile creation failed:', profileError)
+      //     // Можно добавить логику повторной попытки или оставить профиль пустым
+      //   } else {
+      //     profile.value = profileData as UserProfile
+      //   }
+      // }
+
+      await loadProfile(authData.user.id)
 
       return { success: true }
     } catch (e) {

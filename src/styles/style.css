@@ -223,7 +223,6 @@
   }
   .category-card:hover {
     box-shadow: var(--shadow-md);
-    border-color: var(--border-color-strong);
   }
 
   /* STATUS BADGES */

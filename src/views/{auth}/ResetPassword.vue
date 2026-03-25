@@ -333,12 +333,12 @@ function handleResendEmail(): void {
     </div>
 
     <!-- ── Шапка с логотипом ───────────────────────────────────────────── -->
-    <header class="auth-header">
+    <!-- <header class="auth-header">
       <router-link to="/" class="auth-logo">
         <span class="auth-logo-mark">M</span>
         <span class="auth-logo-text">MEDIA<br />ARCHIVE</span>
       </router-link>
-    </header>
+    </header> -->
 
     <!-- ── Центральная зона ────────────────────────────────────────────── -->
     <main class="auth-main">

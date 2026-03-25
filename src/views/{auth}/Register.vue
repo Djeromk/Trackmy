@@ -130,12 +130,12 @@ async function handleRegister(): Promise<void> {
       </div>
     </div>
 
-    <header class="auth-header">
+    <!-- <header class="auth-header">
       <router-link to="/" class="auth-logo">
         <span class="auth-logo-mark">M</span>
         <span class="auth-logo-text">MEDIA<br />ARCHIVE</span>
       </router-link>
-    </header>
+    </header> -->
 
     <main class="auth-main">
       <div class="auth-card auth-card--wide">

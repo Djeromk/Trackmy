@@ -113,14 +113,13 @@ async function handleDemoLogin(): Promise<void> {
     </div>
 
     <!-- ── Шапка с логотипом ─────────────────────────────────────────────── -->
-    <header class="auth-header">
+    <!-- <header class="auth-header">
       <router-link to="/" class="auth-logo">
-        <!-- Белый квадрат с буквой M -->
         <span class="auth-logo-mark">M</span>
-        <!-- Двустрочная подпись -->
+
         <span class="auth-logo-text">MEDIA<br />ARCHIVE</span>
       </router-link>
-    </header>
+    </header> -->
 
     <!-- ── Центральная зона с карточкой ─────────────────────────────────── -->
     <main class="auth-main">

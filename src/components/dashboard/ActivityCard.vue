@@ -101,7 +101,7 @@ const getChartOption = (): EChartsOption => ({
     formatter: "{b}: {c} ({d}%)",
     backgroundColor: "var(--background-card)",
     borderColor: "var(--border-color)",
-    borderWidth: 1,
+    borderWidth: 0,
     confine: true,
     textStyle: {
       color: "var(--text-primary)",
