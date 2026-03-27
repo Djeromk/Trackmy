@@ -54,6 +54,7 @@ export const db = {
     external_id: string | null;
     isCustom: boolean;
     createdBy: string | null;
+    isFeatured?: boolean
   }) {
     const { data: mediaItem, error } = await supabase
       .from("media_items")
@@ -64,6 +65,7 @@ export const db = {
         external_id: data.external_id,
         is_custom: data.isCustom,
         created_by: data.createdBy,
+        is_featured: data.isFeatured,
       })
       .select()
       .single();

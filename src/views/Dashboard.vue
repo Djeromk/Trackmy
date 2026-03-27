@@ -7,6 +7,7 @@ import { useMediaStore } from "@/stores/media";
 import { useAuthStore } from "@/stores/auth";
 import WelcomeCTA from "@/components/dashboard/WelcomeCTA.vue";
 import SkeletonLoader from "@/components/skeleton/SkeletonLoader.vue";
+import FeaturedBlock from '@/components/featured/FeaturedBlock.vue'
 import type {
   MediaType,
   MediaStatus,
@@ -223,7 +224,8 @@ function handleViewAllInProgress() {}
         :items="inProgressItems"
         @update-status="handleUpdateStatus"
         @view-all="handleViewAllInProgress"
-      />
+        />
+        <FeaturedBlock class="mb-8" />
 
       <div v-if="authStore.user">
         <div class="p-4">

@@ -125,7 +125,7 @@ const remainingCount = computed(() => Math.max(0, props.items.length - 3));
           >
             <!-- Обложка -->
             <div
-              class="w-16 h-20 shrink-0 rounded-lg overflow-hidden bg-(--gray-100) shadow-(--shadow-xs)"
+              class="w-20 h-28 shrink-0 rounded-lg overflow-hidden bg-(--gray-100) shadow-(--shadow-xs)"
             >
               <img
                 v-if="getCoverUrl(item)"
