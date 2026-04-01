@@ -5,6 +5,8 @@ import type { MediaStatus, UserMedia } from "@/types";
 import { MEDIA_TYPE_LABELS } from "@/types";
 import StatusDropdown from "@/components/common/StatusDropdown.vue";
 import fallbackImage from "@/assets/fallback.svg";
+import { getOptimizedImage } from "@/utils/utils";
+
 import { getAvailableStatuses } from "../search/utils";
 
 interface Props {
@@ -70,7 +72,7 @@ function confirmDelete() {
           class="w-10 h-14 rounded-lg overflow-hidden bg-(--gray-100) shadow-(--shadow-xs) ring-1 ring-black/5 transition-transform duration-200 hover:scale-105"
         >
           <img
-            :src="coverUrl"
+            :src="getOptimizedImage(coverUrl)"
             :alt="mediaTitle"
             loading="lazy"
             class="w-full h-full object-cover"

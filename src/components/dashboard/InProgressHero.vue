@@ -2,6 +2,7 @@
 import { computed } from "vue";
 import type { UserMedia, MediaStatus } from "@/types";
 import { BookOpen, Film, Gamepad2, ChevronRight } from "lucide-vue-next";
+import { getOptimizedImage } from "@/utils/utils";
 
 interface Props {
   items: UserMedia[]; // Список медиа в процессе
@@ -129,7 +130,7 @@ const remainingCount = computed(() => Math.max(0, props.items.length - 3));
             >
               <img
                 v-if="getCoverUrl(item)"
-                :src="getCoverUrl(item)!"
+                :src="getOptimizedImage(getCoverUrl(item)!)!"
                 :alt="getMediaTitle(item)"
                 class="w-full h-full object-cover"
               />
