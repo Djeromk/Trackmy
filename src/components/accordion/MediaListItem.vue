@@ -100,7 +100,7 @@ function confirmDelete() {
         </div>
       </div>
       <div class="flex items-center gap-2 shrink-0">
-        <div class="w-32">
+        <div class="inline-flex">
           <StatusDropdown
             :current-status="currentStatus"
             :available-statuses="availableStatuses"

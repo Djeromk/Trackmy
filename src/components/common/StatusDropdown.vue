@@ -19,9 +19,9 @@
  * />
  */
 
-import { ref, computed } from 'vue';
-import { ChevronDown, Check } from 'lucide-vue-next';
-import type { MediaStatus } from '@/types';
+import { ref, computed } from "vue";
+import { ChevronDown, Check } from "lucide-vue-next";
+import type { MediaStatus } from "@/types";
 
 export interface StatusOption {
   value: MediaStatus;
@@ -37,13 +37,13 @@ interface Props {
 }
 
 interface Emits {
-  (e: 'select', status: MediaStatus): void;
+  (e: "select", status: MediaStatus): void;
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  placeholderText: 'Добавить в список',
+  placeholderText: "Добавить в список",
   compact: false,
-  buttonClass: '',
+  buttonClass: "",
 });
 
 const emit = defineEmits<Emits>();
@@ -59,18 +59,19 @@ const buttonRef = ref<HTMLButtonElement | null>(null);
 const buttonLabel = computed(() => {
   if (!props.currentStatus) return props.placeholderText;
 
-  const option = props.availableStatuses.find(s => s.value === props.currentStatus);
+  const option = props.availableStatuses.find(
+    (s) => s.value === props.currentStatus,
+  );
   return option?.label ?? props.currentStatus;
 });
 
 const buttonClasses = computed(() => {
-  const base = props.compact
-    ? 'px-2.5 py-1.5 text-xs'
-    : 'px-4 py-3 text-sm';
+  const base = props.compact ? "px-2.5 py-1.5 text-xs" : "px-4 py-3 text-sm";
 
-  const status = props.currentStatus !== null
-    ? 'bg-(--primary-50) border-(--primary-300) text-(--primary-700) hover:bg-(--primary-100)'
-    : 'bg-white border-(--border-color) text-(--text-secondary) hover:border-(--primary-300) hover:bg-(--background-hover)';
+  const status =
+    props.currentStatus !== null
+      ? "bg-(--primary-50) border-(--primary-300) text-(--primary-700) hover:bg-(--primary-100)"
+      : "bg-white border-(--border-color) text-(--text-secondary) hover:border-(--primary-300) hover:bg-(--background-hover)";
 
   return `${base} ${status} ${props.buttonClass}`;
 });
@@ -89,9 +90,7 @@ function toggleDropdown() {
   const openUpward = spaceBelow < estimatedDropdownHeight;
 
   dropdownCoords.value = {
-    top: openUpward
-      ? rect.top - estimatedDropdownHeight - 6
-      : rect.bottom + 6,
+    top: openUpward ? rect.top - estimatedDropdownHeight - 6 : rect.bottom + 6,
     right: window.innerWidth - rect.right,
   };
 
@@ -99,7 +98,7 @@ function toggleDropdown() {
 }
 
 function handleSelect(status: MediaStatus) {
-  emit('select', status);
+  emit("select", status);
   isOpen.value = false;
 }
 
@@ -108,9 +107,9 @@ function handleNativeSelectChange(event: Event) {
   const status = target.value as MediaStatus;
 
   if (status) {
-    emit('select', status);
+    emit("select", status);
   }
-  target.value = '';
+  target.value = "";
 }
 
 function isCurrentStatus(status: MediaStatus): boolean {
@@ -124,7 +123,7 @@ function isCurrentStatus(status: MediaStatus): boolean {
       ref="buttonRef"
       type="button"
       @click="toggleDropdown"
-      class="w-full flex items-center justify-between rounded-xl border transition-all duration-200 font-medium cursor-pointer"
+      class="w-full flex items-center justify-between rounded-xl transition-all duration-200 font-medium cursor-pointer"
       :class="buttonClasses"
     >
       <span>{{ buttonLabel }}</span>
@@ -147,7 +146,9 @@ function isCurrentStatus(status: MediaStatus): boolean {
           }"
           @click.stop
         >
-          <div class="bg-(--background-elevated) rounded-xl shadow-2xl border border-(--border-color) overflow-hidden min-w-[164px] py-1">
+          <div
+            class="bg-(--background-elevated) rounded-xl shadow-2xl border-(--border-color) overflow-hidden min-w-[164px] py-1"
+          >
             <button
               v-for="option in availableStatuses"
               :key="option.value"
@@ -175,41 +176,33 @@ function isCurrentStatus(status: MediaStatus): boolean {
   </div>
 
   <div class="status-dropdown-mobile">
-    <div class="relative">
-      <select
-        @change="handleNativeSelectChange"
-        class="w-full appearance-none rounded-xl border-2 border-(--border-color) bg-white text-(--text-primary) font-medium cursor-pointer transition-all outline-none"
-        :class="
-          compact
-            ? 'px-2.5 py-1.5 pr-8 text-xs'
-            : 'px-4 py-3 pr-10 text-sm'
-        "
+    <div class="relative inline-flex items-center">
+      <div
+        class="flex items-center justify-center rounded-xl bg-white border border-transparent transition-all"
+        :class="compact ? 'p-1.5' : 'p-3'"
         :style="{
-          borderColor: currentStatus !== null ? 'var(--primary-300)' : 'var(--border-color)',
-          backgroundColor: currentStatus !== null ? 'var(--primary-50)' : 'white',
-          color: currentStatus !== null ? 'var(--primary-700)' : 'var(--text-secondary)',
+          backgroundColor:
+            currentStatus !== null ? 'var(--primary-50)' : 'white',
+          color:
+            currentStatus !== null
+              ? 'var(--primary-700)'
+              : 'var(--text-tertiary)',
         }"
       >
-        <option value="" disabled selected hidden>
-          {{ buttonLabel }}
-        </option>
+        <ChevronDown :size="compact ? 14 : 16" />
+      </div>
+      <select
+        @change="handleNativeSelectChange"
+        class="absolute inset-0 w-full h-full opacity-0 cursor-pointer appearance-none"
+      >
         <option
           v-for="option in availableStatuses"
           :key="option.value"
           :value="option.value"
-          :disabled="isCurrentStatus(option.value)"
         >
           {{ option.label }}
         </option>
       </select>
-
-      <ChevronDown
-        :size="compact ? 11 : 14"
-        class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none"
-        :style="{
-          color: currentStatus !== null ? 'var(--primary-700)' : 'var(--text-tertiary)',
-        }"
-      />
     </div>
   </div>
 </template>
@@ -223,8 +216,8 @@ function isCurrentStatus(status: MediaStatus): boolean {
   display: block;
 }
 
-/* Десктоп >= 640px */
-@media (min-width: 640px) {
+/* Десктоп >= 768px */
+@media (min-width: 768px) {
   .status-dropdown-desktop {
     display: block;
   }
