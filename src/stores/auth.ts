@@ -102,9 +102,7 @@ export const useAuthStore = defineStore("auth", () => {
     _initializingPromise = (async () => {
       loading.value = true
       try {
-        console.log('[v0] Starting auth initialization...')
         const { data: { session } } = await supabase.auth.getSession()
-        console.log('[v0] Session retrieved:', session ? 'User logged in' : 'No session')
         if (session?.user) {
           await setUserFromSession(session.user)
         } else {
@@ -130,10 +128,9 @@ export const useAuthStore = defineStore("auth", () => {
       } catch (e) {
         const authError = e as AuthError
         error.value = authError.message
-        console.error('[v0] Auth initialization error:', authError)
+        console.error('Auth initialization error:', authError)
       } finally {
         loading.value = false
-        console.log('[v0] Auth initialization complete. User:', user.value ? 'authenticated' : 'not authenticated')
       }
     })()
 
