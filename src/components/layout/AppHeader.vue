@@ -1,12 +1,15 @@
 <!-- src/components/layout/AppHeader.vue -->
 <script setup lang="ts">
 import { computed } from 'vue'
+import { useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
+import { Home, Library, BarChart3 } from 'lucide-vue-next'
 import ThemeToggle from './ThemeToggle.vue'
 import AppLogo from './AppLogo.vue'
 import HeaderSearch from './HeaderSearch.vue'
 
 const authStore = useAuthStore()
+const route = useRoute()
 
 /**
  * userInitials — первые буквы имени для аватара.
@@ -31,6 +34,34 @@ const userInitials = computed(() => {
         <!-- Логотип слева -->
         <AppLogo class="shrink-0" />
 
+        <!-- Navigation Tabs -->
+        <nav class="flex items-center gap-1 ml-4">
+          <router-link
+            to="/"
+            class="nav-tab"
+            :class="{ 'nav-tab--active': route.path === '/' }"
+          >
+            <Home :size="16" />
+            <span class="hidden sm:inline">Главная</span>
+          </router-link>
+          <router-link
+            to="/library"
+            class="nav-tab"
+            :class="{ 'nav-tab--active': route.path === '/library' }"
+          >
+            <Library :size="16" />
+            <span class="hidden sm:inline">Библиотека</span>
+          </router-link>
+          <router-link
+            to="/stats"
+            class="nav-tab"
+            :class="{ 'nav-tab--active': route.path === '/stats' }"
+          >
+            <BarChart3 :size="16" />
+            <span class="hidden sm:inline">Статистика</span>
+          </router-link>
+        </nav>
+
         <!--
           Строка поиска по центру/слева.
           На мобильных показывает только иконку лупы,
@@ -47,13 +78,6 @@ const userInitials = computed(() => {
           <ThemeToggle />
 
           <template v-if="authStore.isAuthenticated">
-            <router-link
-              :to="{ path: '/', hash: '#my-lists' }"
-              class="hidden sm:block px-3 py-2 rounded-xl text-sm text-(--text-primary) hover:text-(--primary-600) transition-colors"
-            >
-              Мои списки
-            </router-link>
-
             <!--
               Аватар с инициалами → страница профиля.
               Кнопка «Выйти» находится в ProfilePage.vue.
@@ -97,9 +121,36 @@ const userInitials = computed(() => {
 </template>
 
 <style scoped>
+.nav-tab {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.5rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--text-tertiary);
+  transition: all var(--transition-base);
+  cursor: pointer;
+}
+
+.nav-tab:hover {
+  color: var(--text-primary);
+  background-color: var(--background-hover);
+}
+
+.nav-tab--active {
+  color: var(--primary-600);
+  background-color: var(--primary-100);
+}
+
 @media (max-width: 640px) {
   header nav {
     padding: 0 12px;
+  }
+
+  .nav-tab {
+    padding: 0.5rem;
   }
 }
 </style>
