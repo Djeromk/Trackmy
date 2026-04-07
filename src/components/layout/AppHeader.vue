@@ -1,12 +1,21 @@
 <!-- src/components/layout/AppHeader.vue -->
 <script setup lang="ts">
 import { computed } from 'vue'
+import { useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
+import { Home, Library, BarChart3 } from 'lucide-vue-next'
 import ThemeToggle from './ThemeToggle.vue'
 import AppLogo from './AppLogo.vue'
 import HeaderSearch from './HeaderSearch.vue'
 
 const authStore = useAuthStore()
+const route = useRoute()
+
+const navItems = [
+  { path: '/', label: 'Главная', icon: Home },
+  { path: '/library', label: 'Библиотека', icon: Library },
+  { path: '/stats', label: 'Статистика', icon: BarChart3 }
+]
 
 /**
  * userInitials — первые буквы имени для аватара.
@@ -26,6 +35,7 @@ const userInitials = computed(() => {
 <template>
   <header v-if="authStore.isAuthenticated">
     <nav class="mx-auto px-4 sm:px-6 bg-(--primary-100)">
+      <!-- Верхний ряд: логотип + поиск + аватар -->
       <div class="flex justify-between items-center h-16 gap-3">
 
         <!-- Логотип слева -->
@@ -82,14 +92,51 @@ const userInitials = computed(() => {
               Регистрация
             </router-link>
           </template>
-        </div>
-
       </div>
+
+      <!-- Второй ряд: навигационные табы — только на десктопе -->
+      <div class="hidden md:flex items-center gap-1 border-t border-(--border-color) border-opacity-40 py-1">
+        <router-link
+          v-for="item in navItems"
+          :key="item.path"
+          :to="item.path"
+          class="nav-tab"
+          :class="{ 'nav-tab--active': route.path === item.path }"
+        >
+          <component :is="item.icon" :size="15" />
+          {{ item.label }}
+        </router-link>
+      </div>
+
     </nav>
   </header>
 </template>
 
 <style scoped>
+.nav-tab {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.375rem 0.75rem;
+  border-radius: 0.5rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--text-tertiary);
+  text-decoration: none;
+  transition: all var(--transition-base);
+}
+
+.nav-tab:hover {
+  color: var(--text-primary);
+  background-color: var(--background-hover);
+}
+
+.nav-tab--active {
+  color: var(--primary-600);
+  background-color: color-mix(in srgb, var(--primary-100) 60%, transparent);
+  font-weight: 600;
+}
+
 @media (max-width: 640px) {
   header nav {
     padding: 0 12px;
