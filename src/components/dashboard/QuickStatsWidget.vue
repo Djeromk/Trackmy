@@ -36,9 +36,9 @@ const totalInProgress = computed(
     (props.gamesStats.total - props.gamesStats.completed)
 );
 
-const totalItems = computed(
-  () => props.booksStats.total + props.moviesStats.total + props.gamesStats.total
-);
+// const totalItems = computed(
+//   () => props.booksStats.total + props.moviesStats.total + props.gamesStats.total
+// );
 
 function goToStats() {
   router.push("/stats");

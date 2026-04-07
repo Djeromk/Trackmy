@@ -2,7 +2,7 @@
 import { ref, onMounted, defineAsyncComponent } from "vue";
 import { useMediaStore } from "@/stores/media";
 import { useAuthStore } from "@/stores/auth";
-import { BookOpen, Film, Gamepad2, Plus } from "lucide-vue-next";
+import { BookOpen, Film, Gamepad2 } from "lucide-vue-next";
 import type { MediaType, MediaStatus, ExternalMovie, ExternalBook, ExternalGame } from "@/types";
 
 const mediaStore = useMediaStore();
@@ -131,7 +131,7 @@ const addButtons = [
       </Transition>
 
       <!-- Header -->
-      <div class="flex items-center justify-between mb-6">
+      <!-- <div class="flex items-center justify-between mb-6">
         <div>
           <h1 class="text-2xl font-bold text-(--text-primary) mb-1">
             Моя библиотека
@@ -141,7 +141,6 @@ const addButtons = [
           </p>
         </div>
 
-        <!-- Add buttons -->
         <div class="flex items-center gap-2">
           <button
             v-for="btn in addButtons"
@@ -154,7 +153,7 @@ const addButtons = [
             <span class="hidden md:inline">{{ btn.label }}</span>
           </button>
         </div>
-      </div>
+      </div> -->
 
       <!-- Media Accordion -->
       <MediaAccordion
