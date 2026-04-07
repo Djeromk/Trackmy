@@ -92,6 +92,7 @@ const userInitials = computed(() => {
               Регистрация
             </router-link>
           </template>
+        </div>
       </div>
 
       <!-- Второй ряд: навигационные табы — только на десктопе -->
