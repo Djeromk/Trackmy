@@ -33,10 +33,10 @@ const userInitials = computed(() => {
 </script>
 
 <template>
-  <header v-if="authStore.isAuthenticated">
-    <nav class="mx-auto px-4 sm:px-6 bg-(--primary-100)">
+  <header v-if="authStore.isAuthenticated" >
+    <nav class="mx-auto  bg-(--primary-100)">
       <!-- Верхний ряд: логотип + поиск + аватар -->
-      <div class="flex justify-between items-center h-16 gap-3">
+      <div class="flex justify-between items-center h-16 gap-3 px-4 sm:px-6">
 
         <!-- Логотип слева -->
         <AppLogo class="shrink-0" />
@@ -96,7 +96,7 @@ const userInitials = computed(() => {
       </div>
 
       <!-- Второй ряд: навигационные табы — только на десктопе -->
-      <div class="hidden md:flex items-center gap-1 border-t border-(--border-color) border-opacity-40 py-1">
+      <div class="hidden md:flex items-center gap-1 border-t px-4 border-(--border-color) border-opacity-40 py-1 bg-(--background-body)">
         <router-link
           v-for="item in navItems"
           :key="item.path"
@@ -120,7 +120,7 @@ const userInitials = computed(() => {
   gap: 0.375rem;
   padding: 0.375rem 0.75rem;
   border-radius: 0.5rem;
-  font-size: 0.8125rem;
+  font-size: var(--text-base);
   font-weight: 500;
   color: var(--text-tertiary);
   text-decoration: none;
