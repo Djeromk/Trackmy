@@ -130,22 +130,21 @@ function handleViewAllInProgress() {
       <!-- Welcome CTA for non-authenticated users -->
       <WelcomeCTA v-if="!authStore.user" />
 
-      <!-- Hero: In Progress -->
-      <InProgressHero
-        v-if="authStore.isAuthenticated"
-        :items="inProgressItems"
-        @update-status="handleUpdateStatus"
-        @view-all="handleViewAllInProgress"
-      />
-
-      <!-- Quick Stats Widget -->
+      <!-- Quick Stats Hero (moved to top) -->
       <QuickStatsWidget
         v-if="authStore.user && mediaStore.userMedia.length > 0"
         :books-stats="quickStats.booksStats"
         :movies-stats="quickStats.moviesStats"
         :games-stats="quickStats.gamesStats"
         :this-week-completed="quickStats.thisWeekCompleted"
-        class="mb-8"
+      />
+
+      <!-- Hero: In Progress -->
+      <InProgressHero
+        v-if="authStore.isAuthenticated"
+        :items="inProgressItems"
+        @update-status="handleUpdateStatus"
+        @view-all="handleViewAllInProgress"
       />
 
       <!-- Featured Block -->
