@@ -198,16 +198,16 @@ function goToStats() {
 /* Stacked covers */
 .covers-stack {
   position: relative;
-  width: calc(18px * 2 + 32px); /* 3 avatars overlapping */
-  height: 36px;
+  width: calc(18px * 2 + 42px); /* 3 avatars overlapping */
+  height: 56px;
   flex-shrink: 0;
 }
 
 .cover-avatar {
   position: absolute;
   top: 0;
-  width: 32px;
-  height: 36px;
+  width: 42px;
+  height: 56px;
   border-radius: 4px;
   object-fit: cover;
   border: 2px solid var(--background-card);
@@ -225,6 +225,14 @@ function goToStats() {
 
   .stat-divider {
     margin: 0 1rem;
+  }
+  .cover-avatar {
+    width: 32px;
+    height: 42px;
+  }
+  .covers-stack {
+    width: calc(18px * 2 + 32px);
+    height: 42px;
   }
 }
 </style>
