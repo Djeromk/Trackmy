@@ -608,9 +608,10 @@ onUnmounted(() => {
   align-items: center;
   height: 38px;
   background-color: var(--background-subtle);
-  border: 1px solid var(--border-color);
+  border: 1.5px solid var(--border-color);
   border-radius: var(--border-radius-lg);
   overflow: hidden;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.06);
   transition: border-color var(--transition-base), box-shadow var(--transition-base);
 }
 

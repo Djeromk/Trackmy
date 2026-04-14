@@ -1,12 +1,21 @@
 <!-- src/components/layout/AppHeader.vue -->
 <script setup lang="ts">
 import { computed } from 'vue'
+import { useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
+import { Home, Library, BarChart3 } from 'lucide-vue-next'
 import ThemeToggle from './ThemeToggle.vue'
 import AppLogo from './AppLogo.vue'
 import HeaderSearch from './HeaderSearch.vue'
 
 const authStore = useAuthStore()
+const route = useRoute()
+
+const navItems = [
+  { path: '/', label: 'Главная', icon: Home },
+  { path: '/library', label: 'Библиотека', icon: Library },
+  { path: '/stats', label: 'Статистика', icon: BarChart3 }
+]
 
 /**
  * userInitials — первые буквы имени для аватара.
@@ -24,15 +33,16 @@ const userInitials = computed(() => {
 </script>
 
 <template>
-  <header v-if="authStore.isAuthenticated">
-    <nav class="mx-auto px-4 sm:px-6 bg-(--primary-100)">
-      <div class="flex justify-between items-center h-16 gap-3">
+  <header v-if="authStore.isAuthenticated" >
+    <nav class="mx-auto  bg-(--primary-100)">
+      <!-- Верхний ряд: логотип + поиск + аватар -->
+      <div class="flex justify-between items-center h-16 gap-3 px-4 sm:px-6">
 
         <!-- Логотип слева -->
         <AppLogo class="shrink-0" />
 
         <!--
-          Строка поиска по центру/слева.
+          Строка поиска по центру.
           На мобильных показывает только иконку лупы,
           на десктопе — полную строку с кнопками категорий.
           flex-1 позволяет строке занять доступное пространство между
@@ -47,13 +57,6 @@ const userInitials = computed(() => {
           <ThemeToggle />
 
           <template v-if="authStore.isAuthenticated">
-            <router-link
-              :to="{ path: '/', hash: '#my-lists' }"
-              class="hidden sm:block px-3 py-2 rounded-xl text-sm text-(--text-primary) hover:text-(--primary-600) transition-colors"
-            >
-              Мои списки
-            </router-link>
-
             <!--
               Аватар с инициалами → страница профиля.
               Кнопка «Выйти» находится в ProfilePage.vue.
@@ -90,13 +93,51 @@ const userInitials = computed(() => {
             </router-link>
           </template>
         </div>
-
       </div>
+
+      <!-- Второй ряд: навигационные табы — только на десктопе -->
+      <div class="hidden md:flex items-center gap-1 border-t px-4 border-(--border-color) border-opacity-40 py-1 bg-(--background-body)">
+        <router-link
+          v-for="item in navItems"
+          :key="item.path"
+          :to="item.path"
+          class="nav-tab"
+          :class="{ 'nav-tab--active': route.path === item.path }"
+        >
+          <component :is="item.icon" :size="15" />
+          {{ item.label }}
+        </router-link>
+      </div>
+
     </nav>
   </header>
 </template>
 
 <style scoped>
+.nav-tab {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.375rem 0.75rem;
+  border-radius: 0.5rem;
+  font-size: var(--text-base);
+  font-weight: 500;
+  color: var(--text-tertiary);
+  text-decoration: none;
+  transition: all var(--transition-base);
+}
+
+.nav-tab:hover {
+  color: var(--text-primary);
+  background-color: var(--background-hover);
+}
+
+.nav-tab--active {
+  color: var(--primary-600);
+  background-color: color-mix(in srgb, var(--primary-100) 60%, transparent);
+  font-weight: 600;
+}
+
 @media (max-width: 640px) {
   header nav {
     padding: 0 12px;

@@ -33,16 +33,8 @@ window.addEventListener('unhandledrejection', (event: PromiseRejectionEvent): vo
     '\nСообщение:', error.message,
     '\nСтек:', error.stack
   )
-
-  /**
-   * Предотвращаем стандартный вывод браузера в консоль
-   * (он менее информативен чем наш).
-   * Раскомментируй если хочешь скрыть дублирование в DevTools:
-   */
-  // event.preventDefault()
 })
 
-// Инициализируем auth store перед монтированием приложения
 const authStore = useAuthStore()
 authStore.initialize().then(() => {
   app.mount('#app')

@@ -132,7 +132,18 @@ export const db = {
       query = query.eq("status", filters.status);
     }
 
-    return query;
+    const result = await query;
+
+    // Map snake_case to camelCase for TypeScript types
+    if (result.data) {
+      result.data = result.data.map((item: any) => ({
+        ...item,
+        updatedAt: item.updated_at,
+        createdAt: item.created_at,
+      }));
+    }
+
+    return result;
   },
 
   async addUserMedia(data: {

@@ -40,12 +40,12 @@ const borderClass = computed(() => `${props.variant}-card`);
     <!-- ── Шапка ───────────────────────────────────────────────── -->
     <div class="flex items-start justify-between mb-5">
       <div class="flex items-center gap-3">
-        <div
-          class="w-11 h-11 rounded-xl flex items-center justify-center shrink-0 shadow-(--shadow-xs)"
-          :style="{ backgroundColor: accentColor }"
-        >
-          <component :is="icon" :size="22" class="text-white" />
-        </div>
+        <component
+          :is="icon"
+          :size="26"
+          :style="{ color: accentColor }"
+          class="shrink-0"
+        />
         <div>
           <h4 class="text-lg font-semibold text-(--text-primary) leading-tight">
             {{ title }}
@@ -58,10 +58,8 @@ const borderClass = computed(() => `${props.variant}-card`);
 
       <button
         @click="emit('add')"
-        class="flex bg-(--primary) text-(--text-inverse) items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium cursor-pointer transition-all duration-(--transition-base) shrink-0"
+        class="flex text-(--text-primary) items-center gap-1.5 px-3 py-2 rounded-2xl text-sm font-medium cursor-pointer transition-all duration-(--transition-base) shrink-0"
         :style="{
-          // backgroundColor: `color-mix(in srgb, ${accentColor} 12%, transparent)`,
-          // color: accentColor,
           border: `1px solid color-mix(in srgb, ${accentColor} 25%, transparent)`,
         }"
       >
@@ -70,72 +68,48 @@ const borderClass = computed(() => `${props.variant}-card`);
       </button>
     </div>
 
-    <!-- ── Статистика ──────────────────────────────────────────── -->
-    <!--
-      Асимметричная сетка: левая колонка — крупная метрика «В процессе»,
-      правая — две вторичные метрики (завершено + бэклог) стопкой.
-      row-span-2 на левой ячейке растягивает её на обе строки правой.
-    -->
-    <div class="grid grid-cols-2 gap-3 mb-5" v-if="stats.total > 0">
+    <!-- ── Статистика + Прогресс-бар ─────────────────────────── -->
+    <div v-if="stats.total > 0" class="stats-body">
 
-      <!-- В процессе — главная метрика, занимает всю левую колонку -->
-      <div
-        class="row-span-2 rounded-xl p-4 flex flex-col justify-center"
-
-      >
+      <!-- Левая часть: крупное «Завершено» + прогресс-бар -->
+      <div class="stats-left">
         <div
-          class="text-4xl md:text-5xl font-extrabold leading-none mb-2 tracking-tight"
+          class="stats-main-value"
           :style="{ color: accentColor }"
         >
-          {{ stats.inProgress }}
-        </div>
-        <div class="text-xs font-medium text-(--text-tertiary)">В процессе</div>
-      </div>
-
-      <!-- Завершено — правая верхняя ячейка -->
-      <div
-        class="rounded-xl p-3"
-
-      >
-        <div class="text-2xl font-bold leading-none mb-1 text-(--status-completed-text)">
           {{ stats.completed }}
         </div>
-        <div class="text-xs text-(--text-tertiary)">Завершено</div>
-      </div>
+        <div class="stats-main-label">Завершено</div>
 
-      <!-- Бэклог — правая нижняя ячейка -->
-      <div
-        class="rounded-xl p-3"
-
-      >
-        <div class="text-2xl font-bold leading-none mb-1 text-(--text-secondary)">
-          {{ stats.backlog }}
+        <!-- Прогресс-бар -->
+        <div class="progress-wrap">
+          <div class="progress-track">
+            <div
+              class="progress-fill"
+              :style="{ width: `${completionRate}%`, backgroundColor: accentColor }"
+            />
+          </div>
+          <span class="progress-pct" :style="{ color: accentColor }">
+            {{ completionRate }}%
+          </span>
         </div>
-        <div class="text-xs text-(--text-tertiary)">Бэклог</div>
       </div>
 
-    </div>
+      <!-- Вертикальный разделитель -->
+      <div class="stats-divider" />
 
-    <!-- ── Прогресс-бар ────────────────────────────────────────── -->
-    <div v-if="stats.total > 0">
-      <div class="flex items-center justify-between mb-1.5">
-        <span class="text-xs text-(--text-tertiary)">Завершено</span>
-        <span class="text-xs font-semibold text-(--text-secondary)">
-          {{ completionRate }}%
-        </span>
+      <!-- Правая часть: вторичные метрики -->
+      <div class="stats-right">
+        <div class="secondary-stat">
+          <span class="secondary-value">{{ stats.inProgress }}</span>
+          <span class="secondary-label">В процессе</span>
+        </div>
+        <div class="secondary-stat">
+          <span class="secondary-value">{{ stats.backlog }}</span>
+          <span class="secondary-label">Бэклог</span>
+        </div>
       </div>
-      <div
-        class="w-full h-1.5 rounded-full overflow-hidden"
-        style="background-color: var(--border-color);"
-      >
-        <div
-          class="h-full rounded-full transition-all duration-500"
-          :style="{
-            width: `${completionRate}%`,
-            backgroundColor: accentColor,
-          }"
-        />
-      </div>
+
     </div>
 
     <!-- Брошено — только если есть -->
@@ -161,20 +135,112 @@ const borderClass = computed(() => `${props.variant}-card`);
   </div>
 </template>
 
-<style>
+<style scoped>
+/* Stats layout */
+.stats-body {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  margin-bottom: 0;
+}
+
+/* Left: main completed metric */
+.stats-left {
+  flex: 1;
+  min-width: 0;
+}
+
+.stats-main-value {
+  font-size: 3rem;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  margin-bottom: 0.25rem;
+}
+
+.stats-main-label {
+  font-size: 0.6875rem;
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.875rem;
+}
+
+/* Progress bar */
+.progress-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.progress-track {
+  flex: 1;
+  height: 5px;
+  border-radius: 9999px;
+  background-color: var(--border-color);
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  border-radius: 9999px;
+  transition: width 0.5s ease;
+}
+
+.progress-pct {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* Vertical divider */
+.stats-divider {
+  width: 1px;
+  height: 4rem;
+  background-color: var(--border-color);
+  margin: 0 1.25rem;
+  flex-shrink: 0;
+}
+
+/* Right: secondary metrics */
+.stats-right {
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+  flex-shrink: 0;
+}
+
+.secondary-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+}
+
+.secondary-value {
+  font-size: 1.375rem;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--text-primary);
+}
+
+.secondary-label {
+  font-size: 0.6875rem;
+  color: var(--text-tertiary);
+  white-space: nowrap;
+}
+
 @media (max-width: 640px) {
   .category-card {
-    padding: 1rem; /* было 1.5rem */
+    padding: 1rem;
   }
 
-  /* Статистика - уменьшить отступы между метриками */
-  .grid.grid-cols-2.gap-3 {
-    gap: 0.5rem;
+  .stats-main-value {
+    font-size: 2.5rem;
   }
 
-  /* Завершено/Бэклог - уменьшить размер текста */
-  .text-2xl {
-    font-size: 1.5rem;
+  .stats-divider {
+    margin: 0 1rem;
   }
 }
 </style>

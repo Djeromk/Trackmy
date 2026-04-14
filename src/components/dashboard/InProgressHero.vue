@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import type { UserMedia, MediaStatus } from "@/types";
-import { BookOpen, Film, Gamepad2, ChevronRight } from "lucide-vue-next";
+import { BookOpen, Film, Gamepad2, ChevronRight, Clock, Star } from "lucide-vue-next";
 import { getOptimizedImage } from "@/utils/utils";
 
 interface Props {
@@ -48,25 +48,6 @@ function getMediaAction(type: string): string {
   }
 }
 
-function getBorderStyle(type: string) {
-  return {
-    borderLeftColor: getBorderColor(type),
-  };
-}
-
-function getBorderColor(type: string): string {
-  switch (type) {
-    case "book":
-      return "var(--category-books-bg)"; // Голубой
-    case "movie":
-      return "var(--category-movies-bg)"; // Синий
-    case "game":
-      return "var(--category-games-bg)"; // Фиолетовый
-    default:
-      return "var(--primary-500)";
-  }
-}
-
 function getMediaTitle(item: UserMedia): string {
   return item.media?.title || "Без названия";
 }
@@ -80,6 +61,20 @@ const visibleItems = computed(() => props.items.slice(0, 5).reverse());
 const hasMore = computed(() => props.items.length > 4);
 
 const remainingCount = computed(() => Math.max(0, props.items.length - 3));
+
+function formatDate(dateString: string | null): string {
+  if (!dateString) return "";
+  const date = new Date(dateString);
+  const now = new Date();
+  const diffMs = now.getTime() - date.getTime();
+  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+  if (diffDays === 0) return "сегодня";
+  if (diffDays === 1) return "вчера";
+  if (diffDays < 7) return `${diffDays} дн. назад`;
+  if (diffDays < 30) return `${Math.floor(diffDays / 7)} нед. назад`;
+  return date.toLocaleDateString("ru-RU", { day: "numeric", month: "short" });
+}
 </script>
 
 <template>
@@ -114,10 +109,11 @@ const remainingCount = computed(() => Math.max(0, props.items.length - 3));
           v-for="(item, index) in visibleItems"
           :key="item.id"
           :title="getMediaTitle(item)"
-          class="card-padded w-72 sm:w-80 lg:w-95 flex border-l-15 items-center gap-4 hover:shadow-(--shadow-md) transition-all duration-(--transition-base)"
+          class="card-padded  w-72 sm:w-80 lg:w-95 flex items-center gap-4 hover:shadow-(--shadow-md) transition-all duration-(--transition-base)"
+          :class="`hero-${item.media?.type}-card`"
           :style="{
             animationDelay: `${index * 50}ms`,
-            ...getBorderStyle(item.media?.type || ''),
+
           }"
         >
           <router-link
@@ -143,34 +139,48 @@ const remainingCount = computed(() => Math.max(0, props.items.length - 3));
             </div>
 
             <!-- Информация -->
-            <div class="flex-1 min-w-0">
-              <!-- Тип медиа и действие -->
-              <div class="flex items-center gap-2 mb-1">
-                <component
-                  :is="getMediaIcon(item.media?.type || '')"
-                  :size="14"
-                  class="text-(--primary-600) shrink-0"
-                />
-                <span
-                  class="text-xs text-(--primary-700) font-medium uppercase tracking-wide"
+            <div class="flex-1 min-w-0 flex flex-col justify-between">
+              <div>
+                <!-- Тип медиа и действие -->
+                <div class="flex items-center gap-2 mb-1">
+                  <component
+                    :is="getMediaIcon(item.media?.type || '')"
+                    :size="14"
+                    class="text-(--primary-600) shrink-0"
+                  />
+                  <span
+                    class="text-xs text-(--primary-700) font-medium uppercase tracking-wide"
+                  >
+                    {{ getMediaAction(item.media?.type || "") }}
+                  </span>
+                </div>
+
+                <!-- Название -->
+                <h4
+                  class="text-base whitespace-normal font-semibold text-(--text-primary) mb-1 text-ellipsis-2"
                 >
-                  {{ getMediaAction(item.media?.type || "") }}
+                  {{ getMediaTitle(item) }}
+                </h4>
+
+                <span
+                  v-if="item.current_episode !== null"
+                  class="badge-in-progress inline-flex"
+                >
+                  {{ getEpisodes(item) }}
                 </span>
               </div>
 
-              <!-- Название -->
-              <h4
-                class="text-base whitespace-normal font-semibold text-(--text-primary) mb-1 text-ellipsis-2"
-              >
-                {{ getMediaTitle(item) }}
-              </h4>
-
-              <span
-                v-if="item.current_episode !== null"
-                class="badge-in-progress inline-flex"
-              >
-                {{ getEpisodes(item) }}
-              </span>
+              <!-- Дата обновления и рейтинг -->
+              <div class="flex items-center gap-3 mt-2 text-xs text-(--text-tertiary)">
+                <div v-if="item.updatedAt" class="flex items-center gap-1">
+                  <Clock :size="12" />
+                  <span>{{ formatDate(item.updatedAt) }}</span>
+                </div>
+                <div v-if="item.rating" class="flex items-center gap-1">
+                  <Star :size="12" class="fill-yellow-400 text-yellow-400" />
+                  <span class="font-medium">{{ item.rating }}/10</span>
+                </div>
+              </div>
             </div>
           </router-link>
         </div>

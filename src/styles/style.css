@@ -88,7 +88,7 @@
 
 @utility card {
   background-color: var(--background-card);
-  border-radius: var(--border-radius-md);
+  border-radius: var(--border-radius-lg);
   border: var(--border-width) solid var(--border-color);
   box-shadow: var(--shadow-sm);
   transition: box-shadow var(--transition-base);
@@ -290,9 +290,14 @@
   }
 
   /* CATEGORY CARDS */
-  .books-card { border-left: 20px solid var(--category-books-bg); }
-  .movies-card { border-left: 20px solid var(--category-movies-bg); }
-  .games-card { border-left: 20px solid var(--category-games-bg); }
+  /* .books-card { border-left: 20px solid var(--category-books-bg); } */
+  .books-card { background: linear-gradient(135deg, var(--category-books-bg) -30%, var(--background-card) 60%); }
+  .movies-card { background: linear-gradient(135deg, var(--category-movies-bg) -30%, var(--background-card) 60%); }
+  .games-card { background: linear-gradient(135deg, var(--category-games-bg) -30%, var(--background-card) 60%); }
+
+  .hero-book-card { background: linear-gradient(135deg, var(--category-books-bg) -100%, var(--background-card) 60%); }
+  .hero-movie-card { background: linear-gradient(135deg, var(--category-movies-bg) -100%, var(--background-card) 60%); }
+  .hero-game-card { background: linear-gradient(135deg, var(--category-games-bg) -100%, var(--background-card) 60%); }
 
   /* NAV */
   .nav-link-active {
