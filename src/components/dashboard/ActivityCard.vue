@@ -108,22 +108,36 @@ const getChartOption = (): EChartsOption => ({
       fontSize: 12,
     },
     padding: [8, 12],
-
   },
   legend: {
     show: false,
   },
+  graphic: [
+    {
+      type: "text",
+      left: "center",
+      top: "center",
+      style: {
+        text: `${completionPercentage.value}%`,
+        textAlign: "center",
+        fill: "var(--text-primary)",
+        fontSize: 22,
+        fontWeight: "bold",
+        fontFamily: "inherit",
+      },
+    },
+  ],
   series: [
     {
       name: "Завершено",
       type: "pie",
-      radius: ["62%", "88%"],
+      radius: ["58%", "85%"],
       center: ["50%", "50%"],
       data: chartData.value,
       itemStyle: {
         borderRadius: 3,
         borderColor: "var(--background-card)",
-        borderWidth: 1,
+        borderWidth: 2,
       },
       startAngle: 90,
       label: { show: false },
@@ -212,90 +226,48 @@ onUnmounted(() => { cleanup(); });
       </div>
     </div>
 
-    <!-- ── Главный KPI: процент ────────────────────────────────── -->
-    <!--
-      Процент — главный элемент карточки.
-      Крупная цифра + подпись + горизонтальный прогресс-бар.
-      Прогресс-бар показывает то же значение визуально.
-    -->
-    <div class="mb-6">
-      <div class="flex items-end gap-3 mb-3">
-        <span
-          class="text-5xl sm:text-7xl font-extrabold leading-none tracking-tight"
-          style="color: var(--primary-500);"
-        >
-          {{ completionPercentage }}%
-        </span>
-        <span class="text-sm text-(--text-tertiary) mb-2 leading-tight">
-          общий<br>прогресс
-        </span>
-      </div>
+    <!-- ── Диаграмма + легенда (двухколоночный layout) ──────── -->
+    <div v-if="totalCompleted > 0" class="flex items-center gap-6">
 
-      <!-- Прогресс-бар — широкий, с акцентным цветом -->
-      <div class="w-full h-2.5 rounded-full overflow-hidden" style="background-color: var(--border-color);">
-        <div
-          class="h-full rounded-full transition-all duration-700 ease-out"
-          style="background-color: var(--primary-500);"
-          :style="{ width: `${completionPercentage}%` }"
-        />
-      </div>
-    </div>
+      <!-- Левая колонка: большая диаграмма с % в центре -->
+      <div ref="chartContainer" class="chart-donut shrink-0" />
 
-    <!-- ── Диаграмма + статистика по категориям ───────────────── -->
-    <div v-if="totalCompleted > 0" class="flex items-center gap-4">
-
-      <!--
-        Кольцевая диаграмма ECharts.
-        Квадратный контейнер — диаграмма сама центрируется внутри.
-        h-32 w-32 — достаточно для читаемости кольца.
-      -->
-      <div ref="chartContainer" class="w-32 h-32 shrink-0" />
-
-      <!-- Легенда: три строки, иконка-точка + название + счётчик -->
-      <div class="flex flex-col gap-2 flex-1 min-w-0">
+      <!-- Правая колонка: легенда по категориям -->
+      <div class="flex flex-col gap-3 flex-1 min-w-0">
 
         <!-- Книги -->
-        <div class="flex items-center justify-between gap-2">
+        <div class="legend-row">
           <div class="flex items-center gap-2 min-w-0">
-            <span
-              class="w-2.5 h-2.5 rounded-full shrink-0"
-              :style="{ backgroundColor: CATEGORY_COLORS.books }"
-            />
+            <span class="legend-dot" :style="{ backgroundColor: CATEGORY_COLORS.books }" />
             <span class="text-sm text-(--text-secondary) truncate">Книги</span>
           </div>
-          <span class="text-sm font-semibold text-(--text-primary) shrink-0">
+          <span class="legend-count">
             {{ booksStats.completed }}
-            <span class="font-normal text-(--text-tertiary)">/ {{ booksStats.total }}</span>
+            <span class="legend-total">/ {{ booksStats.total }}</span>
           </span>
         </div>
 
         <!-- Фильмы -->
-        <div class="flex items-center justify-between gap-2">
+        <div class="legend-row">
           <div class="flex items-center gap-2 min-w-0">
-            <span
-              class="w-2.5 h-2.5 rounded-full shrink-0"
-              :style="{ backgroundColor: CATEGORY_COLORS.movies }"
-            />
+            <span class="legend-dot" :style="{ backgroundColor: CATEGORY_COLORS.movies }" />
             <span class="text-sm text-(--text-secondary) truncate">Фильмы</span>
           </div>
-          <span class="text-sm font-semibold text-(--text-primary) shrink-0">
+          <span class="legend-count">
             {{ moviesStats.completed }}
-            <span class="font-normal text-(--text-tertiary)">/ {{ moviesStats.total }}</span>
+            <span class="legend-total">/ {{ moviesStats.total }}</span>
           </span>
         </div>
 
         <!-- Игры -->
-        <div class="flex items-center justify-between gap-2">
+        <div class="legend-row">
           <div class="flex items-center gap-2 min-w-0">
-            <span
-              class="w-2.5 h-2.5 rounded-full shrink-0"
-              :style="{ backgroundColor: CATEGORY_COLORS.games }"
-            />
+            <span class="legend-dot" :style="{ backgroundColor: CATEGORY_COLORS.games }" />
             <span class="text-sm text-(--text-secondary) truncate">Игры</span>
           </div>
-          <span class="text-sm font-semibold text-(--text-primary) shrink-0">
+          <span class="legend-count">
             {{ gamesStats.completed }}
-            <span class="font-normal text-(--text-tertiary)">/ {{ gamesStats.total }}</span>
+            <span class="legend-total">/ {{ gamesStats.total }}</span>
           </span>
         </div>
 
@@ -317,21 +289,46 @@ onUnmounted(() => { cleanup(); });
 
 <style scoped>
 canvas { outline: none; }
+
+.chart-donut {
+  width: 160px;
+  height: 160px;
+}
+
+.legend-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 9999px;
+  flex-shrink: 0;
+}
+
+.legend-count {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  flex-shrink: 0;
+}
+
+.legend-total {
+  font-weight: 400;
+  color: var(--text-tertiary);
+}
+
 @media (max-width: 640px) {
-  /* Уменьшить размер диаграммы */
-  .w-32.h-32 {
-    width: 6rem;
-    height: 6rem;
+  .chart-donut {
+    width: 130px;
+    height: 130px;
   }
 
-  /* Уменьшить padding карточки */
   .card-padded {
     padding: 1rem;
-  }
-
-  /* Легенда - уменьшить отступы */
-  .flex.flex-col.gap-2 {
-    gap: 0.5rem;
   }
 }
 </style>
