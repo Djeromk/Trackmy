@@ -123,16 +123,16 @@ export const useMediaStore = defineStore("media", () => {
     }
   }
 
-  function startRealtime(userId: string): void {
-    stopRealtime();
-    realtimeChannel.value = subscribeToUserMedia(userId, applyRealtimeEvent);
-  }
-
   function stopRealtime(): void {
     if (realtimeChannel.value) {
       realtimeChannel.value.unsubscribe();
       realtimeChannel.value = null;
     }
+  }
+
+  function startRealtime(userId: string): void {
+    stopRealtime();
+    realtimeChannel.value = subscribeToUserMedia(userId, applyRealtimeEvent);
   }
 
   // Вспомогательные геттеры для фильтрации
